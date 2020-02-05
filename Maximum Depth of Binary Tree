@@ -1,0 +1,89 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+
+typedef struct stack {
+  int              top;
+  int              size;
+  struct TreeNode  *node;
+}stack;
+
+int isFull (stack *myStack) {
+  return myStack->top == myStack->size-1;
+}
+
+int isEmpty (stack *myStack) {
+  return myStack->top == -1;
+}
+
+void push (stack *myStack, struct TreeNode * item) {
+  if (isFull(myStack) == 0)  {
+    myStack->top++;
+    myStack->node[myStack->top] = *item;
+  }    
+}
+
+struct TreeNode * pop (stack *myStack) {    
+  struct TreeNode  *item = NULL;
+  if (isEmpty(myStack) == 0)  {
+    item = &myStack->node[myStack->top--];
+  }    
+  return item;
+}
+
+stack *CreatStack (int size) {
+    stack *myStack;
+    myStack       = (stack *)malloc(sizeof(stack));
+    myStack->top  = -1;
+    myStack->size = size;  
+    myStack->node  = (struct TreeNode   *) malloc(sizeof(struct TreeNode)*size);
+    memset (myStack->node, 0, sizeof(struct TreeNode)*size);    
+    return myStack;
+}
+
+int maxDepth(struct TreeNode* root){
+   int   depth;
+   int   nodeL;
+   int   nodeR;
+   int   size;
+   stack *myStack;
+    
+   if (root == NULL) return 0;
+    
+   depth   = 0;
+   nodeL   = 0;
+   nodeR   = 0;
+   size    = sizeof(struct TreeNode*)*1000;
+   myStack = CreatStack(size);
+    
+   push(myStack, root);
+    
+   while (!isEmpty(myStack)) {
+     depth++;
+       
+     root = pop (myStack);  
+       
+     if ((root->left != NULL) && (root->val !=nodeL)){
+       push(myStack, root); 
+       nodeL = root->val;   
+       root  = root->left;
+     }
+       
+     if ((root->right != NULL) && (root->val !=nodeR)){
+       push(myStack, root); 
+       nodeR = root->val;
+       root  = root->right;
+       //push(myStack, root);   
+     }       
+   }
+  
+   free(myStack->node);
+   free(myStack);
+   return depth;
+}
+
