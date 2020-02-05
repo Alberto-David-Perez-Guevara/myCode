@@ -1,0 +1,23 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+
+bool compareNode (struct TreeNode* s, struct TreeNode* t) {
+    
+  if (s == NULL && t == NULL) return true;
+  if (s == NULL || t == NULL) return false;
+
+  return (bool)((s->val == t->val) && compareNode(s->left, t->left) && compareNode(s->right, t->right));  
+}
+
+bool isSubtree(struct TreeNode* s, struct TreeNode* t){
+    
+  return (bool)((s != NULL) && (compareNode(s, t) || isSubtree(s->left, t) || isSubtree(s->right, t)));
+
+}
+
