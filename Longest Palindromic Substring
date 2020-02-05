@@ -1,0 +1,150 @@
+/*detect palindrome using stack function */
+typedef struct stack {
+  int  top;
+  int  size;
+  char *s;
+}MYSTACK;
+
+MYSTACK *CreateStack (int size) {
+  MYSTACK *stack;
+    
+  stack       = (MYSTACK *)malloc(sizeof(MYSTACK));
+  stack->top  = -1;
+  stack->size = size;
+  stack->s    = (char *)malloc(sizeof(char)*size);
+
+  return stack;
+}
+
+int IsFull(MYSTACK *stack) {    
+  return stack->top == stack->size -1;
+}
+
+int IsEmpty(MYSTACK *stack) {    
+  return stack->top == -1;
+}
+
+void Push (MYSTACK *stack, char item) {
+  if (!IsFull(stack)) {
+    stack->top++;
+    stack->s[stack->top]= item;
+  }
+}
+
+char Pop (MYSTACK *stack) {
+  char item;
+  if (!IsEmpty(stack)) {
+    item = stack->s[stack->top];      
+    stack->top--;
+  } else {
+    item = 0;    
+  }
+  return item;
+}
+
+bool TestPalindrome (char *s, int size) {
+
+  int     slowidx;
+  int     fastidx;
+  char    tmp;
+  bool    res;
+  MYSTACK *stack;
+
+  res     = false;
+  slowidx = 0;
+  fastidx = 0;
+  stack   = CreateStack(size);
+
+  // use fast runner/slow runner aproach
+  while (fastidx < size) {
+    Push(stack,s[slowidx]);
+    slowidx += 1;
+    fastidx += 2;      
+  }
+    
+  // odd size string skips middle character
+  if (size&1) slowidx += 1;
+    
+  // check lower half of stack vs upper half of string
+  while (slowidx < size) {
+    tmp = Pop(stack);
+    if (tmp != s[slowidx]) return false;
+    slowidx += 1;  
+  }
+  
+  res    = (size > 1) ? true:false;
+  free(stack);
+  return res;  
+}
+
+/*detect palindrome using expand around center function */
+int ExpandAroundCenter (char *s, int lIdx, int rIdx) {
+  int  L;
+  int  R;
+  int  cpySize;
+  char *str;    
+  bool test;
+    
+  L       = lIdx;
+  R       = rIdx;
+  test    = true;
+    
+  while ((L>=0) && (R < strlen(s)) && (s[L] == s[R])) {
+    /*  
+      while ((L>=0) && (R < strlen(s)) && (test == true)) {
+    cpySize = (R-L)+1;
+    str     = (char *)malloc(sizeof(char)*cpySize);
+    
+    memset ((void *)str, 0, sizeof(char)*cpySize);        
+    memcpy ((void *)str, (const void *)&s[lIdx], cpySize);   
+    test    = TestPalindrome (str, cpySize);
+    //if (!test) break;
+    */
+    L--;
+    R++;
+  }
+    
+  //free(str);
+  return R-L-1;
+    
+}
+
+char * longestPalindrome(char * s) {
+  int  l1;
+  int  l2;
+  int  len;
+  int  end;
+  int  start; 
+  int  index;
+  int  pivot;
+  char *outStrn;
+    
+  // parameter check
+  if ((s == NULL) || (strlen(s) == 0)) return "";
+    
+  // prepare output string
+  l1      = 0;
+  l2      = 0;
+  end     = 0;
+  start   = 0;
+  len     = strlen(s)+1;
+  outStrn = (char *)malloc(sizeof(char)*len);
+  memset ((void *)outStrn, 0, len);    
+    
+  for (index = 0; index < strlen(s)-1; index++) {
+   
+    l1    = ExpandAroundCenter (s, index, index);
+    l2    = ExpandAroundCenter (s, index, index+1);          
+    pivot = (l1 > l2) ? l1:l2;
+
+    if (pivot > (end-start)) {
+      start = index - ((pivot-1) /2);
+      end   = index + (pivot/2);
+    } 
+  }
+    
+  memset ((void *)outStrn, 0, sizeof(char)*len);        
+  memcpy ((void *)outStrn, (const void *)&s[start], (end-start)+1);
+      
+  return outStrn;
+}
