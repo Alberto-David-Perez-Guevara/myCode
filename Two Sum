@@ -1,0 +1,167 @@
+#define SIZE 100
+
+// define simple hash structure
+typedef struct HASH {
+  int         key;
+  int         data;
+  int         size;    
+} HASH;
+
+// compute hash code
+int HashCode (int key, int size) {
+    
+  int code;
+    
+  code = abs(key%size);
+
+  return code;
+}
+
+// insert element into the Hash table
+void Insert2Hash (HASH *hashT, int key, int data) {
+
+  int hashIdx;
+  int pass;    
+
+  pass = -1;
+    
+  // compute hash code
+  hashIdx = HashCode(key, hashT->size);
+
+  while (hashT[hashIdx].key != -1) {
+    hashIdx++;                            // go to next available pointer on collision        
+    if (hashIdx > hashT[0].size-1) {
+      pass++;
+      break;
+    }   
+  }  
+
+  if (pass < 0) {
+    // there is room in the hash
+    hashT[hashIdx].key  = key;
+    hashT[hashIdx].data = data;    
+    hashT[hashIdx].size = hashT[0].size;
+  } 
+}
+
+// remove element into the Hash table
+void DelfromHash (HASH *hashT, int key, int data) {
+    
+  int hashIdx;
+  int pass;    
+
+  pass = -1;
+  // compute hash code
+  hashIdx = HashCode(key, hashT->size);
+
+  while (hashT[hashIdx].key != key) {
+    hashIdx++;                            // go to next available pointer on collision        
+    if (hashIdx > hashT[0].size-1) {
+      pass++;
+      break;
+    }   
+  }  
+
+  if (pass < 0) {
+    // found and removed
+    hashT[hashIdx].key  = -1;
+    hashT[hashIdx].data = -1;     
+  }     
+}
+
+int SearchHash (HASH *hashT, int key) {
+    
+  int pass; 
+  int data;
+  int hashIdx;
+
+  data = -1;  
+  pass = -1;
+    
+  // compute hash code
+  hashIdx = HashCode(key, hashT[0].size);
+   
+  while (hashT[hashIdx].key != key) {
+    hashIdx++;                            // go to next available pointer on collision        
+    if (hashIdx > hashT[0].size-1) {
+      pass++;
+      break;
+    }   
+  }  
+    
+  if (pass < 0) data = hashT[hashIdx].data; 
+    
+  return data;
+}
+
+void InitHash (HASH *hashT, int* nums, int numsSize) {
+
+  int  idx;    
+  int  realSize;
+    
+  realSize =  (numsSize > SIZE/2 ) ? numsSize*2: SIZE;
+    
+  for (idx = 0; idx < numsSize; idx++) {
+    hashT[idx].key  = -1;                
+    hashT[idx].data = -1;          
+    hashT[idx].size = numsSize;    
+  }    
+
+  for (idx = 0; idx < numsSize; idx++) {
+    Insert2Hash (hashT, nums[idx], idx);
+  }    
+}
+
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int* twoSum(int* nums, int numsSize, int target, int* returnSize){
+
+  int  idx;
+  int  *result;
+  int  lookData;
+  int  lookKey;  
+  int  realSize;
+  HASH *hashT;
+       
+  // initialize ouput variable
+  result = (int *)malloc(sizeof(int)*2);   
+  memset((void *)result, 0, sizeof(int)*2);     
+  
+  // check input parameters
+  if ((nums == NULL) || (numsSize < 1)) {
+    returnSize = result;
+    return result;
+  }
+    
+  // check output parameters
+  if (returnSize == NULL)  {
+    returnSize = (int *)malloc(sizeof(int)*2);
+    memset((void *)returnSize, 0, sizeof(int)*2);
+  }
+  
+  // initialize HASH table 
+  realSize =  (numsSize > SIZE/2 ) ? numsSize*2: SIZE;    
+  hashT    = (HASH *)malloc(sizeof(HASH)*realSize);       
+
+  // initialize HASH
+  InitHash (hashT, nums, numsSize);
+    
+  // look for target;
+  for (idx = 0 ; idx < numsSize; idx++) {
+    lookKey   = target - nums[idx]; 
+    lookData  = SearchHash(hashT, lookKey);
+    if ((lookData < 0) || (lookData == idx))continue;
+    result[1] = lookData;
+    result[0] = idx;     
+    if ((nums[idx]+nums[lookData]) == target) break;
+  }
+    
+  // release memory of internals
+  free(hashT);
+    
+  // prepare output values 
+  *returnSize = 2;
+    
+  return result;
+}
