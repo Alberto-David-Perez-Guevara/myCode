@@ -1,0 +1,109 @@
+#define R_1000 'M'
+#define R_500  'D'
+#define R_100  'C'
+#define R_50   'L'
+#define R_10   'X'
+#define R_5    'V'
+#define R_1    'I'
+
+const char RomanNumerals[] =
+{
+  R_1 , 
+  R_5 ,
+  R_10 , 
+  R_50 ,
+  R_100 , 
+  R_500 ,
+  R_1000,
+  ' ',
+  ' ' 
+};
+
+char * BaseTen2Roman (int num, int digit) {
+    
+  char *str;
+  int   off;
+
+  off = (digit - 1)*2;
+  str = (char *)malloc(sizeof(char)*5); // 4 digits + NULL
+    
+  memset((void *) str, 0, sizeof(char)*5);
+    
+  switch (num) {
+    case 1:
+      str[0] = RomanNumerals[off];
+      break;
+    case 2:
+      str[1] = RomanNumerals[off];
+      str[0] = RomanNumerals[off];          
+      break;
+    case 3:
+      str[2] = RomanNumerals[off];
+      str[1] = RomanNumerals[off];
+      str[0] = RomanNumerals[off];        
+      break;
+    case 4:
+      str[1] = RomanNumerals[off+1];
+      str[0] = RomanNumerals[off]; 
+      break; 
+    case 5:
+      str[0] = RomanNumerals[off+1];          
+      break;
+    case 6:
+      str[1] = RomanNumerals[off];
+      str[0] = RomanNumerals[off+1];           
+      break;
+    case 7:
+      str[2] = RomanNumerals[off];          
+      str[1] = RomanNumerals[off];
+      str[0] = RomanNumerals[off+1];             
+      break;
+    case 8:
+      str[3] = RomanNumerals[off];            
+      str[2] = RomanNumerals[off];          
+      str[1] = RomanNumerals[off];
+      str[0] = RomanNumerals[off+1];             
+      break; 
+    case 9:
+      str[1] = RomanNumerals[off+2];
+      str[0] = RomanNumerals[off];            
+      break; 
+    default:
+      break;
+  }
+  return (char *)str;
+}
+
+void processDigit (char * strOut, int num, int digit) {
+    
+  int  offset    =  0;
+  int basePwr;
+  char *tmp      =  NULL;
+    
+  basePwr = pow(10, digit);
+    
+  if ((num % basePwr)/(basePwr/10)) {
+    tmp    = BaseTen2Roman (((num % basePwr)/(basePwr/10)) , digit);
+    offset = strlen(strOut);
+    memcpy ((void *)&strOut[offset], (void *)tmp, strlen(tmp));
+    free(tmp);
+  }       
+}
+
+char * intToRoman(int num){
+
+  char *strOut   =  NULL;
+    
+  if ((num<1) || (num>3999)) return "";
+    
+  strOut = (char *)malloc(sizeof(char)*16); // 16 digits + NULL
+  memset((void *) strOut, 0, sizeof(char)*16);
+    
+  // digits must be process in order if we are using the same output array  
+  processDigit (strOut, num, 4);
+  processDigit (strOut, num, 3);
+  processDigit (strOut, num, 2);
+  processDigit (strOut, num, 1);   
+    
+  return strOut;
+}
