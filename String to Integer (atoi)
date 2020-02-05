@@ -1,0 +1,103 @@
+
+
+int myAtoi(char * str){
+
+  int end;    // final number in the string
+  int sLen;   // length of the string
+  int sign;   // sign of the number  
+  int sCount; // sign of the number  
+  int index;  // index to the input string
+  int start;  // first number in the string  
+  int whiteT; // transition of white strings  
+    
+  long result; // converted number  
+  
+  // check sanity of input parameters
+  if (str == NULL) return 0;
+    
+  sLen = strlen(str);
+    
+  if (sLen == 0) return 0;
+    
+  // initialize parameters
+  end    = -1;
+  sign   =  0;
+  start  = -1; 
+  result =  0;
+  sCount =  0;
+  whiteT = -1;
+    
+  // check sanity of input parameters
+  for (index=0; index <= sLen; index++) {
+      
+    // check if the first character is something other than -/+ or a number
+    if ((str[index] != ' ') && ( str[index] != '+') &&  (str[index] != '-') && \
+       ((str[index]  < '0') || ( str[index]  > '9')) && ((start == -1))) return 0;
+
+    // check for multiple operation simbols
+    if (sCount > 1)  return 0;      
+    
+    // get sign from the string
+    if ( str[index] == '-') {
+      if ((start == -1 ) || (start > index ))  sign = 1;
+      sCount++;
+      whiteT = index;        
+    }
+     
+    // get sign from the string
+    if ( str[index] == '+') {
+      sCount++;    
+      whiteT = index;  
+    }
+      
+    if ((index > 0) && ((str[index] == '-') || (str[index] == '+')) && \
+        (str[index-1] == '0')) return 0;
+     
+    // get sign from the string
+    if (( str[index] == ' ') && (whiteT != -1) && (whiteT != index) && (whiteT != start)) return 0;
+        
+    // get the initial position of the first number on the string
+    if ((str[index] > '0') && (str[index] <= '9') && (start == -1)) {
+      start  = index;
+      whiteT = index;        
+    }
+    
+    // check white spaces
+    if ((str[index] == '0')) whiteT = index;    
+      
+    // get the final position of the first number on the string
+    if (((str[index] <  '0') || (str[index] >  '9')) && (start != -1)) {
+      end++;
+      break; 
+    }
+    
+    // increment final position
+    if (start > -1)  end = index;
+  }
+    
+
+  // compute result
+  if (result == 0) {
+    sLen = end-start;    
+    for (index = 0; index < sLen; index++) {
+      int idx;
+      idx     = end - index - 1;
+      result += (str[idx]-'0')*pow(10,index);
+    }
+
+    if (((result > 2147483648) & (sign == 1)) || ((sLen > 10) & (sign == 1))) {
+      return 0x80000000;
+    } 
+      
+    if (((result > 2147483647) & (sign == 0)) || ((sLen > 10) & (sign == 0))) {
+      return 0x7FFFFFFF;
+    }
+        
+    // patch sign
+    if (sign) result = ~(result)+1;
+  }
+    
+  // return conversion
+  return (int) result;
+  
+}

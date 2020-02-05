@@ -1,0 +1,66 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+*/
+
+struct ListNode* addTwoNumbers(struct ListNode* l1, struct ListNode* l2){
+    
+  int             size1;
+  int             size2;    
+  int             carry;    
+  int             v1;    
+  int             v2;    
+  struct ListNode *sum;   
+  struct ListNode *head;       
+
+  // initialize and allocate first element;  
+  size1     = 0;
+  size2     = 0;
+  carry     = 0;
+  sum       = (struct ListNode*) malloc (sizeof(struct ListNode));
+  sum->val  = 0;
+  sum->next = NULL;
+  head      = sum;
+    
+  while ((l1->next != NULL) || (l2->next != NULL)) {
+    v1        = (size1 >= size2) ? l1->val: 0;      
+    v2        = (size2 >= size1) ? l2->val: 0;      
+    sum->val  = (carry + v1+v2) %10;            
+    sum->next = (struct ListNode*) malloc (sizeof(struct ListNode));
+    carry     = (carry + v1+v2)/10;
+      
+    // move pointers to next entry      
+    if (l1->next != NULL) {
+      l1  = (struct ListNode*) l1->next;
+      size1++;
+    } 
+      
+    if (l2->next != NULL) {
+      l2  = (struct ListNode*) l2->next;      
+      size2++;
+    }
+      
+    sum = (struct ListNode*) sum->next;    
+  }
+  
+  v1        = (size1 >= size2) ? l1->val: 0;      
+  v2        = (size2 >= size1) ? l2->val: 0;   
+    
+  sum->val  = (carry+v1+v2)%10;    // grab the final value 
+  sum->next = NULL;    
+  carry     = (carry+v1+v2)/10;    
+    
+  if (carry) {
+    sum->next = (struct ListNode*) malloc (sizeof(struct ListNode));      
+    sum       = (struct ListNode*) sum->next;         
+    sum->val  = carry;            
+    sum->next = NULL;     
+  }
+
+    
+  return head;
+
+}

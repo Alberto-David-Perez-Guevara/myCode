@@ -1,0 +1,60 @@
+int charToInt (char s) {
+  int Val;
+
+  Val = 0;
+  if (s == 'M') Val = 1000;
+  if (s == 'D') Val =  500;
+  if (s == 'C') Val =  100;
+  if (s == 'L') Val =   50;
+  if (s == 'X') Val =   10;
+  if (s == 'V') Val =    5;
+  if (s == 'I') Val =    1;
+  return Val;
+}
+
+int romanToInt(char * s) {
+    
+  int slen;
+  int iStr; 
+  int iInt;  
+  int retInt;
+
+  int past;
+  int current;
+    
+  if (s == NULL) return 0;
+  slen   = strlen(s);
+  retInt  = 0;
+  past    = 0;
+  current = 0;
+
+  for (iStr = 0 ; iStr <  slen; iStr++) {
+    if (iStr == 0) {
+        
+      // capture most significant value  
+      retInt = charToInt(s[iStr]);
+      past   = retInt;
+    } else {
+       
+      current = charToInt(s[iStr]);
+      // if following character is equal to previous caracter perform Add  
+      if (current == past) {
+        retInt += current;    
+      } 
+                                  
+      // if following character is grater to previous caracter perform substract                                    
+      if (current  > past) {
+        retInt += current -(2*past);       
+      }
+                                  
+      // if following character is smaller to previous caracter perform add                                    
+      if (current  < past) {
+        retInt += current;       
+      }
+      past = current;
+    }     
+  }
+
+  // return converted value                               
+  return retInt;
+}

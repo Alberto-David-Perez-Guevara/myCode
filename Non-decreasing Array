@@ -1,0 +1,39 @@
+bool checkPossibility(int* nums, int numsSize){
+  int  idx;
+  int  swap;
+  int  *ptr;
+  bool valid;
+    
+  if (numsSize  < 1)  return false;
+  if (numsSize == 1)  return true;
+  if (nums == NULL)  return false;
+    
+  swap  = 0;
+  valid = true;
+  ptr   = (int *)malloc(sizeof(int)*numsSize);
+  memcpy(ptr, nums, sizeof(int)*numsSize);
+
+  for (idx = 0; idx <= numsSize-2; idx++) {
+    if (nums[idx] <= nums[idx+1]) continue;
+    if (swap > 2) break;
+    if (idx == 0) {
+      swap++;
+      continue;
+    }
+    if (idx == (numsSize-2)) {
+      swap++;
+      continue;
+    }
+    if((nums[idx-1] <= nums[idx+1]) || \
+       (nums[idx]   <= nums[idx+2])) {
+      swap++;
+    } else {
+      valid = false;
+    }
+  }
+
+
+  if (swap > 1) valid = false;
+    
+  return valid;
+}
