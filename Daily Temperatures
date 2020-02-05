@@ -1,5 +1,3 @@
-
-
 /**
  * Note: The returned array must be malloced, assume caller calls free().
  */
@@ -7,10 +5,9 @@ int* dailyTemperatures(int* T, int TSize, int* returnSize){
 
   int idx;
   int size;
-  int istk;
+  int pos;
   int *stack;
   int *ans;
-  int off;
     
   if((T == NULL) || (TSize < 1)) {
     if (returnSize != NULL) returnSize = 0;
@@ -23,31 +20,28 @@ int* dailyTemperatures(int* T, int TSize, int* returnSize){
     
   stack = (int *) malloc (sizeof(int)*TSize);
   ans   = (int *) malloc (sizeof(int)*TSize);
-  memset(stack, 0 , sizeof(int)*TSize);
-  memset(ans  , 0 , sizeof(int)*TSize);
-  istk  = 0;
-  off   = 0;
+  memset(stack, -1 , sizeof(int)*TSize);
+  memset(ans  ,  0 , sizeof(int)*TSize);
+  pos  = 0;
     
-  for (idx = size; idx >= 0 ; idx--) {
+  //put the last element in the stack as initial condition
+  stack[pos++] = size;
+    
+  for (idx = size-1; idx >= 0 ; idx--) {
     // push idx into the stack; 
-    stack[istk++] = idx;
+    stack[pos++] = idx;
       
     // compare vs previous element in stack
-    while ((istk > -1) && (T[idx] >= T[stack[istk-off]])) {
-      stack[istk-off]  = 0;
-      istk--;
-      off = (istk == 0) ? 0:1;
+    while ((pos > 0) && (T[idx] >= T[stack[pos-1]])) {
+      stack[pos-1]  = 0;
+      pos--;
     }
-    if (istk < 0) {
-      istk = 0;
-      if (stack[istk] != idx) stack[istk++] = idx;
-    }  else {
-      if (stack[istk-1] != idx) stack[istk++] = idx;
-    }
-    ans[idx]  = (istk-2 < 0)? 0: stack[istk-2]-idx;
+      
+    if (pos < 0) pos = 0;
+    stack[pos++] = idx;
+    ans[idx]  = (pos-2 < 0)? 0: stack[pos-2]-idx;
   } 
     
   *returnSize = TSize;
   return ans;
 }
-
