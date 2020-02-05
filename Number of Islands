@@ -1,0 +1,55 @@
+
+
+bool isValid (char** grid, int row, int col, int maxRow, int maxCol) {
+
+  bool result;
+    
+  // check boundaries
+  if ((row < 0) || (row >= maxRow) || (col < 0) || (col >= maxCol) || (grid[row][col] == '0')) {
+    result = false;
+  } else {
+    result = true;      
+  }
+    
+  return result;
+}
+
+bool MoveInMatrix (char** grid, int row, int col, int maxRow, int maxCol) {
+    
+  // check parameter is valid
+  if (isValid(grid, row, col, maxRow, maxCol) == false) return false;
+      
+  // clear to avoid double counting    
+  grid[row][col] = '0';  
+    
+  // check adjacent cells
+  MoveInMatrix (grid, row-1, col, maxRow, maxCol); // check left
+  MoveInMatrix (grid, row+1, col, maxRow, maxCol); // check right
+  MoveInMatrix (grid, row, col-1, maxRow, maxCol); // check up
+  MoveInMatrix (grid, row, col+1, maxRow, maxCol); // check down
+
+  return true;
+}
+
+int numIslands(char** grid, int gridSize, int* gridColSize) {
+   
+  int col;
+  int row;
+  int nums;
+  
+  nums = 0;
+    
+  // check parameters
+  if ((grid == NULL) || (gridSize == 0) || (*gridColSize == 0)) return nums;
+    
+  for(col = 0 ; col < *gridColSize ; col++) {
+    for(row = 0 ; row < gridSize ; row++) {  
+      if (grid[row][col] == '1') {
+        nums++;
+        MoveInMatrix(grid, row, col, gridSize, *gridColSize);
+      }
+    }     
+  }
+    
+  return nums;
+}
