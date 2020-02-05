@@ -1,0 +1,84 @@
+double findMedianSortedArrays(int* nums1, int nums1Size, int* nums2, int nums2Size){
+
+  int    size [2];
+  int    index[2]; 
+  int    cpyindex[3]; 
+  int    *merge;
+  double mean; 
+  double temp; 
+    
+  mean         =  0;
+    
+  // get middle index for nums1
+  if (nums1Size > 0) {
+      size [0] = nums1Size-1;
+      index[0] = (size[0]/2);
+  } else {
+      index[0] = -1;
+  }
+
+  // get middle index for nums2
+  if (nums2Size > 0) {
+      size [1] = nums2Size-1;
+      index[1] = (size[1]/2);
+  } else {
+      index[1] = -1;
+  }
+
+  if ((index[0] >= 0)  || (index[1] >= 0)) {
+      
+    if (index[0] == -1) {
+      // only array 1 is empty
+      if (nums2Size&1) {
+        mean  = nums2[index[1]];  
+      } else {
+        mean  = nums2[index[1]]+nums2[index[1]+1];
+        mean /= 2;
+      }
+    }
+      
+    if (index[1] == -1) {
+      // only array 1 is empty
+      if (nums1Size&1) {
+        mean  = nums1[index[0]];  
+      } else {
+        mean  = nums1[index[0]]+nums1[index[0]+1];
+        mean /= 2;
+      }
+    }
+      
+    // merge both strings in one string
+    merge = (int *)malloc(sizeof(int)*(nums1Size+nums2Size));
+      
+    if ((index[0] != -1) && (index[1] != -1)) {
+        
+      cpyindex[0] = 0;
+      cpyindex[1] = 0;
+      cpyindex[2] = 0;
+        
+      while ((cpyindex[0] <= size[0] ) || (cpyindex[1] <= size[1])) {
+          
+        index[0] = (cpyindex[0] <= size[0]) ? cpyindex[0]:cpyindex[0]-1;
+        index[1] = (cpyindex[1] <= size[1]) ? cpyindex[1]:cpyindex[1]-1;     
+          
+        if (((nums1[index[0]] < nums2[index[1]]) && (cpyindex[0]<=size[0])) || (cpyindex[1]>size[1])){
+          merge[cpyindex[2]] = nums1[cpyindex[0]];
+          cpyindex[0]++;
+        } else {
+          merge[cpyindex[2]] = nums2[cpyindex[1]]; 
+          cpyindex[1]++;
+        }
+        cpyindex[2]++;
+      }
+
+      if (cpyindex[2]&1) {
+        mean  = merge[(cpyindex[2]-1)/2];
+      } else { 
+        mean  = merge[(cpyindex[2]/2)-1] + merge[cpyindex[2]/2];   
+        mean /= 2;
+      }
+    }
+  }
+
+  return mean;
+}
