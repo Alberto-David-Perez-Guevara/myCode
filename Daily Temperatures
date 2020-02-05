@@ -1,0 +1,53 @@
+
+
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int* dailyTemperatures(int* T, int TSize, int* returnSize){
+
+  int idx;
+  int size;
+  int istk;
+  int *stack;
+  int *ans;
+  int off;
+    
+  if((T == NULL) || (TSize < 1)) {
+    if (returnSize != NULL) returnSize = 0;
+    return NULL;
+  }
+    
+  if (returnSize == NULL) return NULL;
+
+  size  = TSize - 1;
+    
+  stack = (int *) malloc (sizeof(int)*TSize);
+  ans   = (int *) malloc (sizeof(int)*TSize);
+  memset(stack, 0 , sizeof(int)*TSize);
+  memset(ans  , 0 , sizeof(int)*TSize);
+  istk  = 0;
+  off   = 0;
+    
+  for (idx = size; idx >= 0 ; idx--) {
+    // push idx into the stack; 
+    stack[istk++] = idx;
+      
+    // compare vs previous element in stack
+    while ((istk > -1) && (T[idx] >= T[stack[istk-off]])) {
+      stack[istk-off]  = 0;
+      istk--;
+      off = (istk == 0) ? 0:1;
+    }
+    if (istk < 0) {
+      istk = 0;
+      if (stack[istk] != idx) stack[istk++] = idx;
+    }  else {
+      if (stack[istk-1] != idx) stack[istk++] = idx;
+    }
+    ans[idx]  = (istk-2 < 0)? 0: stack[istk-2]-idx;
+  } 
+    
+  *returnSize = TSize;
+  return ans;
+}
+
