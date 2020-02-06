@@ -1,0 +1,65 @@
+/**
+ * Return an array of arrays of size *returnSize.
+ * The sizes of the arrays are returned as *returnColumnSizes array.
+ * Note: Both returned array and *columnSizes array must be malloced, assume caller calls free().
+ */
+int** merge(int** intervals, int intervalsSize, int* intervalsColSize, int* returnSize, int** returnColumnSizes){
+    
+    int idx;    
+    int row;
+    int col;
+    int **output;
+    int *newInterval;       
+    
+    output = NULL;
+    
+    // check the input parameters and return
+    if ((intervals == NULL) || (intervalsSize < 1) || (intervalsColSize == NULL) || (*intervalsColSize < 1)) return output;
+    
+    // if the entries are not format correctly 
+    if ((intervalsSize == 1) || (*intervalsColSize == 1)) {
+      returnSize          = (int *)  malloc (sizeof(int));        
+      *returnSize         = intervalsSize;
+      returnColumnSizes   = (int **) malloc (sizeof(int *));
+      *returnColumnSizes  = (int *)  malloc (sizeof(int ));
+      **returnColumnSizes = *intervalsColSize;
+      return intervals;
+    }
+    
+    col       = *intervalsColSize;
+    output    = (int **) malloc (sizeof(int*)*(intervalsSize));
+    output[0] = (int *)  malloc (sizeof(int) *col);
+       
+    // reserved first element to house at least 1 interval
+    newInterval     = (int *) malloc (sizeof(int)*col);
+    newInterval[0]  = intervals[0][0];
+    newInterval[1]  = intervals[0][1];
+    row             = 0;
+    output [row][0] = newInterval[0];
+    output [row][1] = newInterval[1];    
+    
+    for (idx = 0; idx < intervalsSize; idx++) {
+      if (newInterval[1] >= intervals[idx][0])  {
+        newInterval[1]    = intervals[idx][1];
+        output [row][0]   = newInterval[0];
+        output [row][1]   = newInterval[1];
+     
+      } else {
+        output[++row]     = (int *)  malloc (sizeof(int) *col);
+        newInterval[0]    = intervals[idx][0];
+        newInterval[1]    = intervals[idx][1];          
+        output [row][0]   = newInterval[0];
+        output [row][1]   = newInterval[1];                 
+      }
+    }
+    
+    free(newInterval); 
+    returnSize          = (int *)  malloc (sizeof(int));
+    *returnSize         = row+1;
+    returnColumnSizes   = (int **) malloc (sizeof(int*));
+    *returnColumnSizes  = (int *)  malloc (sizeof(int ));
+    **returnColumnSizes = col;
+      
+    return (int**)output;
+}
+
