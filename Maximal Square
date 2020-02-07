@@ -1,0 +1,54 @@
+int min (int a, int b) {
+  return (a<b)? a:b;
+}
+
+int max (int a, int b) {
+  return (a>b)? a:b;    
+}
+
+
+int maximalSquare(char** matrix, int matrixSize, int* matrixColSize) {
+    
+  int col;
+  int row;
+  int area;
+  int prev;
+  int temp;    
+  int *dynamicSol;
+
+  area = 0;
+  prev = 0;
+       
+  // check parameters
+  if ((matrix == NULL) || (matrixSize == 0) || (*matrixColSize == 0)) return area;
+
+   
+  if (((matrixSize == 1) && (**matrix == '1'))) return 1;
+    
+  if (((matrixSize == 1) && (*matrixColSize <= 1) && (**matrix == '0'))) return 0;    
+    
+  if (((matrixSize == 1) && (*matrixColSize !=0))) {
+      for (col = 0; col < *matrixColSize; col++) 
+        if (matrix[0][col] == '1') return 1;
+      return 0;
+  }
+      
+  dynamicSol = (int *)malloc(1+sizeof(int)*matrixSize*(*matrixColSize));
+  memset(dynamicSol, 0, sizeof(int)*matrixSize*(*matrixColSize));    
+
+  for(row = 1 ; row <= matrixSize ; row++) {     
+    for(col = 1 ; col <= *matrixColSize ; col++) {
+      temp = dynamicSol[col];
+      if (matrix[row-1][col-1] == '1') {
+        dynamicSol[col] = min (min (dynamicSol[col-1], dynamicSol[col]),prev)+1;
+        area            = max (area,dynamicSol[col]);
+      } else {
+        dynamicSol[col] = 0;
+      }
+      prev = temp;
+    }     
+  }
+    
+  return area*area;
+}
+
