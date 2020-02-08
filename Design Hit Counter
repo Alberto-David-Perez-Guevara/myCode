@@ -1,0 +1,99 @@
+
+typedef struct _HitCounter {
+  int                time;
+  int                size;
+  struct _HitCounter *prev;   
+  struct _HitCounter *next;
+} HitCounter;
+
+/** Initialize your data structure here. */
+HitCounter* hitCounterCreate() {
+    
+    HitCounter *Head;
+    
+    Head        = (HitCounter*)malloc(sizeof(HitCounter));
+    Head->time  = 0;
+    Head->size  = 0;
+    Head->next  = NULL;
+    Head->prev  = NULL;
+    
+    return Head;
+}
+
+/** Record a hit.
+        @param timestamp - The current timestamp (in seconds granularity). */
+void hitCounterHit(HitCounter* obj, int timestamp) {
+    HitCounter *tmp;
+    
+    // check parameters
+    if ((obj == NULL) || (timestamp <0) || (obj->time > timestamp)) return;
+    
+    tmp = obj;
+    // find all entries above start time
+    while (tmp->next != NULL) {
+       tmp  = tmp->next;
+    }
+    
+    obj = tmp;
+    
+    // create new entry
+    obj->next        = (HitCounter*)malloc(sizeof(HitCounter));
+    obj->next->time  = timestamp;
+    obj->next->size  = 1 + obj->size;
+    obj->next->prev  = obj;
+    obj->next->next  = NULL;
+}
+
+/** Return the number of hits in the past 5 minutes.
+        @param timestamp - The current timestamp (in seconds granularity). */
+int hitCounterGetHits(HitCounter* obj, int timestamp) {
+
+    int        start_t;
+    int        hit_count;
+    HitCounter *tmp;
+    
+    // check parameters
+    if ((obj == NULL) || (timestamp <0) || (obj->time > timestamp)) return 0;
+    
+    tmp       = obj;
+    start_t   = (timestamp < 300)? 1:(timestamp-300)+1;
+    hit_count = 0;
+    
+    // find all entries above start time
+    while (tmp != NULL) {
+    
+      // find first element
+      if (tmp->time >= start_t){
+        hit_count++;
+      }
+        
+      // find last element
+      if (tmp->time > timestamp){
+        break;
+      }
+        
+      // go to next element
+      tmp  = tmp->next;
+    }   
+    return (hit_count);
+}
+
+void hitCounterFree(HitCounter* obj) {
+   HitCounter *tmp;
+
+   while (obj != NULL)  {
+       tmp = obj;
+       obj = obj->next;
+       free(tmp);
+    }
+}
+
+/**
+ * Your HitCounter struct will be instantiated and called as such:
+ * HitCounter* obj = hitCounterCreate();
+ * hitCounterHit(obj, timestamp);
+ 
+ * int param_2 = hitCounterGetHits(obj, timestamp);
+ 
+ * hitCounterFree(obj);
+*/
