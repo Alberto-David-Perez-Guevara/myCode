@@ -1,0 +1,215 @@
+#define SIZE 65521
+
+typedef struct hash {
+  int    key;
+  int    size;
+  int    time;    
+  char   *data; 
+}HASH;
+
+// compute hash code
+int HashCode (char *data, int size) {
+
+ unsigned int idx;
+ unsigned int key;
+ 
+ key = 0;
+    
+ // use Jenkings algorithm to comput HASH from a string   
+ for(idx = 0; idx < strlen(data); ++idx)
+ {
+    key += data[idx];
+    key += (key << 10);
+    key ^= (key >> 6);
+ }
+ key += (key << 3);
+ key ^= (key >> 11);
+ key += (key << 15);
+ return (key&SIZE);
+     
+}
+
+// insert element into the Hash table
+void Insert2Hash (HASH *hashT, int key, char *data, int time) {
+
+  int hashIdx;
+  int pass;    
+  int slen;    
+
+  pass = -1;
+    
+  // key is correct data is the same
+  if ((hashT[key].data != NULL) && (strcmp (hashT[key].data, data) == 0)) {
+    hashT[key].time  = time;
+    return;
+  }
+  // go to next available pointer on collision      
+  while (hashT[key].key != -1) {
+    key++;                                 
+    if (key > hashT[0].size-1) {
+      pass++;
+      break;
+    }   
+  }  
+
+  if (pass < 0) {
+    // there is room in the hash
+    hashT[key].key   = key;
+    hashT[key].time  = time;      
+    hashT[key].size  = hashT[0].size;
+    slen             = strlen(data);
+    hashT[key].data  = malloc(1+sizeof(char)*slen);  
+    strcpy(hashT[key].data, data);
+  } 
+}
+
+// remove element into the Hash table
+void DelfromHash (HASH *hashT, int key) {
+    
+  int hashIdx;
+  int pass;    
+
+  pass = -1;
+  // compute hash code
+  //hashIdx = HashCode(key, hashT->size);
+
+  while (hashT[key].key != key) {
+    key++;                            // go to next available pointer on collision        
+    if (key > hashT[0].size-1) {
+      key++;
+      break;
+    }   
+  }  
+
+  if (pass < 0) {
+    // found and removed
+    hashT[key].key  = -1;
+    hashT[key].time = 0;
+    free(hashT[key].data);     
+  }     
+}
+
+char* SearchHash (HASH *hashT, int key, char *data) {
+    
+  int pass; 
+  char *str;
+    
+  str = NULL;  
+  pass = -1;
+      
+  if ((hashT[key].data == NULL) || (data == NULL)) return str;
+    
+  while (strcmp (hashT[key].data, data) != 0) {
+    // go to next available pointer on collision      
+    key++;
+    while (hashT[key].data == NULL) {
+      key++;
+      if (key > hashT[0].size-1) {
+        pass++;
+        break;
+      } 
+    }
+      
+    if (key > hashT[0].size-1) {
+      pass++;
+      break;      
+    }        
+  }
+  if (pass < 0) str = hashT[key].data; 
+    
+  return str;
+}
+
+typedef struct _Logger{
+  HASH  *hashT;    
+} Logger;
+
+/** Initialize your data structure here. */
+
+Logger* loggerCreate() {
+    
+  int    idx;
+  Logger *node;
+    
+  node              = malloc (sizeof(Logger));
+  node->hashT       = malloc (sizeof(HASH)*SIZE);
+     
+  for (idx = 0; idx < SIZE; idx++) {
+    node->hashT[idx].key  = -1;            
+    node->hashT[idx].data = NULL;        
+    node->hashT[idx].time = 0;          
+    node->hashT[idx].size = SIZE;    
+  }    
+  
+  return node;
+}
+
+/** Returns true if the message should be printed in the given timestamp, otherwise returns false.
+        If this method returns false, the message will not be printed.
+        The timestamp is in seconds granularity. */
+bool loggerShouldPrintMessage(Logger* obj, int timestamp, char * message) {
+
+  int  key;
+  int  code;    
+  char *string;    
+    
+  // check input parameters
+  if ((obj == NULL) || (timestamp < 0) || (message == NULL) || obj->hashT == NULL) return false;
+    
+  string = NULL;
+         
+  // calculate key to the HASH
+  key    = HashCode(message, SIZE); 
+
+  // search key in Hash
+  string = SearchHash (obj->hashT, key, message);
+    
+  // check if string in Hash is equal to message
+  if (string == NULL) {
+    // if string is NULL then its not in the hash  
+    Insert2Hash (obj->hashT, key, message, timestamp);
+    return true;
+  } else {
+    // if string is in the HASH comapre to current message
+    if (strcmp(message, string)==0) {
+      // we found a match need to check the time stamp  
+      if((obj->hashT[key].time + 10) <= timestamp) {
+        Insert2Hash (obj->hashT, key, message, timestamp);          
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      // 2 strings same HASH check if we need to remove item from HASH
+      if((obj->hashT[key].time + 10) <= timestamp) {
+        //DelfromHash (HASH *hashT, int key)          
+        Insert2Hash (obj->hashT, key, message, timestamp);          
+        return true;
+      } else {
+        return false;
+      }        
+    }
+  }
+      
+  return true;  
+}
+
+void loggerFree(Logger* obj) {
+    
+  int idx;
+    
+  for (idx = 0; idx < SIZE; idx++) {
+    if (obj->hashT[idx].data != NULL)
+      free (obj->hashT[idx].data);
+  }   
+    
+  if (obj != NULL) free(obj);    
+}
+
+/**
+ * Your Logger struct will be instantiated and called as such:
+ * Logger* obj = loggerCreate();
+ * bool param_1 = loggerShouldPrintMessage(obj, timestamp, message);
+ 
+ * loggerFree(obj);
+*/
