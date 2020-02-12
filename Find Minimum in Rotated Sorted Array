@@ -1,0 +1,41 @@
+
+
+int findMin(int* nums, int numsSize){
+  int min;
+  int max;
+  int mid;
+    
+  // check input parameters
+  if ((nums == NULL) || (numsSize < 1)) return -1;
+    
+  // if there is only 1 element then return element
+  if (numsSize == 1) return *nums;
+    
+  // get edges;
+  min  = 0;
+  max  = numsSize - 1;
+    
+  // adjust middle point
+  while (min < max) {
+    
+    mid = min + (max-min)/2; 
+        
+    if (nums[min] > nums[max]) {
+      if (min == mid) mid++;
+      min = mid;
+      if (min>=max) {
+        min = max;
+        break;
+      }
+    } else { 
+      if ((min !=0) && (nums[min] > nums[min-1])){
+        max = mid;
+        min = 1;
+      } else {
+        break;
+      }
+    }
+  }
+    
+  return nums[min];
+}
