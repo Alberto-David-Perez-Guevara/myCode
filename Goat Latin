@@ -1,0 +1,84 @@
+
+char * toGoatLatin(char * S){
+
+  int  idx;
+  int  slen;
+  int  wrdNum;
+  char *iWord; 
+  char *tmpStr;
+  char *tmpOut;
+  char *outStr;
+    
+  if ((S == NULL) || (strlen(S) < 1)) return NULL;
+    
+  wrdNum = 1;
+    
+  // get the first Word;
+  iWord  = NULL;
+  outStr = NULL;
+  tmpOut = NULL;
+  iWord  = strtok (S," "); 
+  
+  while (iWord != NULL) {
+    // lenght of iWord + null + space for "ma" + "#a"
+    slen     = strlen(iWord) + wrdNum + 2; 
+    // reserve memory 
+    tmpStr   = malloc (1+sizeof(char )*slen);
+    memset (tmpStr, 0, slen);
+    // check if first caracter is a bowel
+    if ((iWord[0]=='a') || (iWord[0]=='e')  || (iWord[0]=='i') || (iWord[0]=='o') || 
+        (iWord[0]=='u') || (iWord[0]=='A')  || (iWord[0]=='E') || (iWord[0]=='I') || 
+        (iWord[0]=='O') || (iWord[0]=='U')  || (strlen(iWord) == 1)){
+      // copy the new word
+      for (idx=0 ; idx < slen; idx++ ) {
+        // copy iword without the first character
+        if (idx <= (strlen(iWord)-1)) tmpStr[idx] = iWord[idx]; 
+        if (idx == (strlen(iWord)))   tmpStr[idx] = 'm';
+        if (idx >  (strlen(iWord)))   tmpStr[idx] = 'a';
+      }
+      tmpStr[idx] = NULL;
+    } else {
+      // copy the new word
+      for (idx=0 ; idx < slen; idx++ ) {
+        // copy iword without the first character
+        if (idx <= (strlen(iWord)-2)) tmpStr[idx] = iWord[idx+1];
+        if (idx == (strlen(iWord)-1)) tmpStr[idx] = iWord[0]; 
+        if (idx == (strlen(iWord)))   tmpStr[idx] = 'm';
+        if (idx >  (strlen(iWord)))   tmpStr[idx] = 'a';
+      }
+      tmpStr[idx] = NULL;
+    }
+        
+    // increment word count
+    wrdNum++;
+      
+    if (outStr != NULL) {
+      // we have contents on the output buffer that we need to store momentarly   
+      tmpOut = malloc (1+sizeof(char )*strlen(outStr));
+      strcpy(tmpOut, outStr);
+      free(outStr); 
+    }
+      
+    if (tmpOut != NULL) {
+      slen   = 2 + strlen(tmpOut)+ strlen(tmpStr);
+      outStr = malloc (sizeof(char )*slen);
+      strcpy (outStr, tmpOut);
+      outStr[strlen(tmpOut)]   = ' ';
+      outStr[strlen(tmpOut)+1] = NULL;
+      strcat (outStr, tmpStr);
+      free(tmpOut);
+    } else {
+      slen   = 1 + strlen(tmpStr);
+      outStr = malloc (sizeof(char )*slen);
+      strcpy (outStr, tmpStr);
+    }
+           
+    free(tmpStr);
+    // get next word
+    iWord    = strtok (NULL," ");   
+      
+  }
+    
+  return  outStr;
+}
+
