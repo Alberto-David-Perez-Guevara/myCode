@@ -1,0 +1,38 @@
+
+
+bool isValidSudoku(char** board, int boardSize, int* boardColSize){
+ 
+  int col;
+  int row;
+  int subBox;
+  int val;
+  int hash[500] = {0};
+    
+  // check parameters
+  if ((board == NULL) || (*boardColSize < 9) || (boardSize < 9 ) ||(boardColSize == NULL)) return false;
+    
+  for (row = 0; row < 9; row++) {
+    for (col = 0; col < 9; col++) {
+      if (board[row][col] != '.')   {
+        val = (board[row][col]-'0');
+
+        // check if column has the value  
+        if (hash[val+(col*10)]     == val)  return false;
+         
+        // check if row has the value  
+        if (hash[val+(row*10)+100] == val)  return false;
+          
+        // check if sub-box has the value  
+        subBox = (((row/3)*3)+(col/3))*10;         
+        if (hash[val+subBox+ 200]   == val) return false;
+
+        // put values in hash
+        hash[val+(col*10)]      = val;
+        hash[val+(row*10)+100]  = val;
+        hash[val+subBox+ 200]   = val;
+      }
+    }
+  }
+  
+  return true;
+}
