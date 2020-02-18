@@ -1,0 +1,54 @@
+int smallest(char *string){
+  int  idx;
+  int  slen;
+  int  cIdx;
+  int  cache[26] = {0};
+    
+  slen = strlen(string);
+    
+  for (idx = 0; idx < slen; idx++) {
+    cIdx        = string[idx] - 'a';
+    cache[cIdx]++;
+  }
+    
+  idx = 0;
+  while (cache[idx] == 0) {
+    idx++;
+  }
+    
+  return cache[idx];
+}
+
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int* numSmallerByFrequency(char ** queries, int queriesSize, char ** words, int wordsSize, int* returnSize){
+
+  int  slen;
+  int  qNum;
+  int  wNum;
+  int  idx_q;
+  int  idx_w;    
+  int  *result;
+    
+  if ((queries == NULL) || (words == NULL) || (queriesSize < 1) || (returnSize < 1) || (returnSize == NULL)) {
+    returnSize = 0;
+    return NULL;
+  }
+    
+  result      = malloc(sizeof(int)*queriesSize);
+  *returnSize = queriesSize;
+   
+  for (idx_q = 0; idx_q < queriesSize; idx_q++) {
+    qNum          = smallest(queries[idx_q]);
+    result[idx_q] = 0;  
+    for (idx_w = 0; idx_w < wordsSize; idx_w++) {
+      wNum        = smallest(words[idx_w]);
+      if (qNum < wNum) result[idx_q]++;
+    }
+  }
+ 
+  return result;
+}
+
+
