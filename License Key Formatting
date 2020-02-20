@@ -1,0 +1,54 @@
+
+char * licenseKeyFormatting(char * S, int K) {
+    
+  int  idx; 
+  int  gpx;     
+  int  size;
+  char *output; 
+  char *tmpStr; 
+    
+  // check input parameters
+  if ((S == NULL) || (K < 0)) return NULL;
+  
+  size = strlen(S);
+    
+  // if input is size 1 return S
+  if (size == 1) {
+    if ((*S >= 'a') && (*S <= 'z')) *S = (*S -'a')+ 'A';  
+    if (*S == '-') *S = 0;
+    return S;
+  }
+    
+  tmpStr = malloc(sizeof(char)*(size+(size/K)));
+  memset(tmpStr, 0, sizeof(char)*(size+(size/K)));
+    
+  output = malloc(sizeof(char)*(size+(size/K)));
+  memset(output, 0, sizeof(char)*(size+(size/K)));  
+    
+  gpx = 0;
+    
+  for (idx = 0;  idx < size; idx++) {         
+    if (S[idx] == '-') {
+      gpx++;
+      continue;
+    }
+    if ((S[idx] >= 'a') && (S[idx] <= 'z')) {
+      output[idx-gpx] = (S[idx]-'a') + 'A';
+    } else {
+      output[idx-gpx] = S[idx];
+    }
+  }
+
+  size = strlen(output);
+  for (idx = size-1;  idx > 0; idx -= K) {
+    if (K > idx) break;
+    strcpy(tmpStr,&output[1+idx-K]);
+    output[1+idx-K] = '-';
+    strcpy(&output[2+idx-K], tmpStr);
+  }
+    
+  free(tmpStr);
+  return output; 
+}
+
+
