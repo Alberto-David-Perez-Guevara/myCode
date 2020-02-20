@@ -1,0 +1,44 @@
+
+double distancePoint ( int *a, int *b) {     
+  int x         = a[0] - b[0];
+  int y         = a[1] - b[1];    
+  double square = sqrt ((x*x)+(y*y));
+  return square;
+}
+
+bool checkSquare (int* p1, int* p2, int* p3, int* p4) {
+  bool   valid       = false;
+  double distance[6] = {0};   
+
+  distance[0] = distancePoint (p1, p2);
+  distance[1] = distancePoint (p2, p3);    
+  distance[2] = distancePoint (p3, p4);        
+  distance[3] = distancePoint (p4, p1);     
+  // diagonal    
+  distance[4] = distancePoint (p1, p3);         
+  distance[5] = distancePoint (p2, p4);
+    
+  if (distance[0]  == 0) return valid;
+  if (((distance[0] == distance[1]) && (distance[1] == distance[2]) && (distance[2] == distance[3])) &&
+    ((distance[4] == distance[5]))) {
+    valid = true;      
+  }
+    
+  return valid;    
+}
+
+bool validSquare(int* p1, int p1Size, int* p2, int p2Size, int* p3, int p3Size, int* p4, int p4Size) {
+    
+  bool   valid       = false;   
+
+    
+  if ((p1 == NULL) || (p2 == NULL) || (p3 == NULL) || (p4 == NULL)) return valid;
+
+  // calculate the distance of the points   
+  valid   = checkSquare (p1, p2, p3, p4);
+  valid  |= checkSquare (p1, p3, p2, p4);
+  valid  |= checkSquare (p1, p2, p4, p3);      
+
+  return valid;
+}
+
