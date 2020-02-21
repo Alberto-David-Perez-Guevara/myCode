@@ -1,0 +1,32 @@
+struct TreeNode* createTree (int* nums, int left, int right) {
+
+  int             middle;
+  struct TreeNode *newNode;
+    
+  if (left > right) return NULL;
+
+  newNode = (struct TreeNode *)malloc(sizeof(struct TreeNode));
+    
+  middle         = left + ((right-left)/2);
+
+  newNode->val   = nums[middle];
+  newNode->left  = createTree (nums, left, middle-1);
+  newNode->right = createTree (nums, middle+1, right);     
+
+  return newNode;
+}
+
+struct TreeNode* sortedArrayToBST(int* nums, int numsSize){
+
+  int    left;
+  int    right;
+  int    middle;    
+  struct TreeNode *newNode;
+    
+  if ((nums == NULL) || (numsSize < 1)) return NULL;
+
+    
+  newNode = createTree(nums, 0, numsSize-1);
+    
+  return newNode;
+}
