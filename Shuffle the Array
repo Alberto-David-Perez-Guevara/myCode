@@ -1,0 +1,28 @@
+
+
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int* shuffle(int* nums, int numsSize, int n, int* returnSize){
+
+  int index;
+  int *shuffleArray = NULL;  
+    
+  // Check input parameters  
+  if ((nums     != NULL) &&  
+    (returnSize != NULL) &&
+    ((numsSize  >= 1) && (numsSize <= 1000))) {
+      
+    // returned array must be malloced  
+    shuffleArray  = malloc(sizeof(int)*numsSize);
+     
+    for (index = 0; index   < n; index ++) {
+      shuffleArray[(index*2)]   = nums[index];
+      shuffleArray[(index*2)+1] = nums[index+n];
+    }
+      
+    *returnSize = numsSize;
+  }
+    
+  return shuffleArray;
+}
