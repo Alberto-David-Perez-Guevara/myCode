@@ -1,0 +1,29 @@
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int* runningSum(int* nums, int numsSize, int* returnSize){
+    
+  int          *result;
+  int          partial;  
+  unsigned int index;  
+    
+  index       = 0;
+  partial     = 0;   
+  *returnSize = 0;
+  result      = NULL;  
+    
+  if ((numsSize >= 1) && (numsSize <= 1000)) {
+      
+    result      = malloc(sizeof(int)*numsSize);
+    *returnSize = numsSize;
+    result[0]   = ((nums[0] > -1000000) && (nums[0] < 1000000)) ? nums[0]:0;
+      
+    for (index = 1; index < numsSize; index++) {
+      partial  = ((nums[index] > -1000000) && (nums[index] < 1000000)) ? nums[index]:0;
+        
+      result[index] = partial + result[index-1];
+    } 
+  }
+      
+  return result;
+}
