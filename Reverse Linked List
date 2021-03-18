@@ -6,6 +6,43 @@
  * };
  */
 
+/********recursive solution***********
+// START
+
+struct ListNode* start;
+void reverse (struct ListNode* Node) {
+    
+    struct ListNode *curr;
+    curr = Node;
+    
+    if (Node == NULL) {
+        return;
+    }
+    
+    if (Node->next == NULL) {
+        start  = Node;
+        return;
+    }
+    
+    reverse (Node->next);
+    
+    curr->next->next = curr;
+    curr->next       = NULL;
+}
+
+struct ListNode* reverseList(struct ListNode* head) {
+  start = NULL;       
+  if (head != NULL) {
+     reverse (head);
+  }
+  return start;
+}
+
+// END
+************************************************/
+
+/***************Iterative solution*****************
+// START
 
 struct ListNode* reverseList(struct ListNode* head) {
   
@@ -25,3 +62,6 @@ struct ListNode* reverseList(struct ListNode* head) {
     
   return previous;
 }
+
+// END
+***************Iterative solution*******************/
