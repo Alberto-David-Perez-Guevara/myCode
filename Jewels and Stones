@@ -1,0 +1,79 @@
+// ASCII 65-90   'A' to 'Z' size 25
+// ASCII 97-122  'a' to 'z' size 25
+
+// transform char value into a index to the Hash of Jewels
+unsigned int getValue (char jewel) {
+    unsigned int value;
+    value = (unsigned int)-1;
+    
+    if ((jewel >= 65) && (jewel <= 90)) {
+        value = jewel-65;
+    }
+
+    if ((jewel >= 97) && (jewel <= 122)) {
+        value = (jewel-97)+26;
+    }
+    return value;
+}
+
+// enable Hash jewel array to know which to count
+void enableJewels (char *jewels, unsigned int jewelSize, int *JewelEnable) {
+    unsigned int idx   = 0;
+    unsigned int index = 0;
+    
+    for (idx = 0; idx < jewelSize; idx++) {
+        
+        index = getValue (jewels [idx]);
+        
+        if (index <= 52) {
+            JewelEnable [index] = 1;
+        } else {
+            JewelEnable [index] = 0;            
+        }
+    }
+}
+
+// count which stones are in jewel hash
+int countStones (char *stones, unsigned int stoneSize, int *JewelEnable) {
+    unsigned int idx   = 0;
+    unsigned int index = 0;
+    unsigned int count = 0;
+    
+    for (idx = 0; idx < stoneSize; idx++) {
+        
+        index = getValue (stones [idx]);
+        
+        if (index <= 52) {
+            if (JewelEnable [index] == 1) {
+                count++;
+            }
+        }
+    }
+    
+    return count;
+}
+
+int numJewelsInStones(char * jewels, char * stones) {
+  
+    // initialize functions
+    unsigned int jewelSize       = 0;
+    unsigned int stoneSize       = 0;
+    unsigned int totalCount      = 0;
+    unsigned int JewelEnable[52] = {0}; 
+    
+    // input params valid
+    if ((jewels != NULL) && (stones != NULL)) {
+    
+        jewelSize = strlen(jewels);
+        stoneSize = strlen(stones);
+        
+        // check input params range
+        if (((jewelSize >= 1) && (jewelSize <= 50)) &&
+            ((stoneSize >= 1) && (stoneSize <= 50))) {
+            enableJewels (jewels, jewelSize, JewelEnable);
+            totalCount = countStones  (stones, stoneSize, JewelEnable);
+        }
+    }
+    
+    return  totalCount;
+}
