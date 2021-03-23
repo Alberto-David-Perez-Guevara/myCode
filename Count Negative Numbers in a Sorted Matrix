@@ -1,0 +1,19 @@
+
+int countNegatives(int** grid, int gridSize, int* gridColSize){
+    int row;
+    int col;
+    int result;
+    
+    row    = 0;
+    col    = 0;
+    result = 0;
+    
+    for (row = 0; row < gridSize; row++) {
+        for (col = 0; col < *gridColSize; col++) {
+            result += (grid[row][col] < 0) ? 1 : 0; 
+        }
+    }
+    
+    return result;
+
+}
