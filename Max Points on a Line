@@ -1,0 +1,226 @@
+// Node structure definition
+typedef struct Node {
+  int         x;
+  int         y;
+  int         count;
+  struct Node *next;   
+}Node;
+
+// list structure definition
+typedef struct List {
+  bool         enable;
+  float        gradient;
+  Node        *Node;
+  struct List *next; 
+}List;
+
+// calculate gradiant of a line 
+float calcGradient (int x1, int y1, int x2, int y2) {
+    float gradient;
+    
+    if ((x2-x1) == 0) {
+        // vertical line
+        gradient = (float) 0xFFFFFFFF;
+    } else {
+        gradient = (float)(y2-y1)/(float)(x2-x1);
+    }
+    
+    return gradient;
+}
+
+// check if point is part of the same line
+bool isPartOfLine (int x1, int y1, int x2, int y2, float gradient) {
+    bool   found;
+    float  gradient_calc;
+    
+    found = false;
+    
+    gradient_calc = calcGradient (x1, y1, x2, y2);
+    
+    if (gradient_calc == gradient) found = true;
+    
+    // the point is not it self
+    if ((x1 == x2) && (y1 == y2)) found = false;
+        
+    return found;
+}
+
+bool SearchGradient (List *list, float gradient, int x, int y, int *index, List **ptr) {
+    
+  bool found; 
+  List *scan;  
+    
+  found = false;
+  *index = 0;
+  scan  = list;
+    
+  while (scan != NULL) {
+      if ((gradient == scan->gradient) && (scan->enable == true)) {
+          found = true;   
+          break;
+      } else {
+          *index +=1;
+          scan = scan->next;
+      }
+  }
+    
+  if (found) *ptr = scan;
+  return found;
+}
+
+bool SearchNode (List *list, float gradient, int x, int y, int *entry, List **ptr) {
+    
+  int  idx;
+  bool found; 
+  List *scan;
+  Node *node;
+    
+  found = false;
+  scan  = list;
+    
+  for (idx= 0; idx < *entry; idx++) {
+     scan = scan->next; 
+  }
+    
+  if (gradient == scan->gradient) {
+      node = scan->Node;
+      while (node != NULL) {
+          if (isPartOfLine (x, y, node->x, node->y, gradient) == true) {
+              found = true;
+              break;
+          } else {
+              node = node->next;
+          }
+      }
+  } else {
+      scan = scan->next;
+  }
+    
+  if (found) *ptr = scan;  
+  return found;
+}
+
+// insert element into the Hash table
+void InsertList (List *list, float gradient, int x, int y) {
+  
+  // check if node is empty  
+  while ((list->next != NULL) && (list->enable == true)) {
+      list = list->next;
+  }
+    
+  if (list != NULL){
+      // initialize the node in the element
+      list->enable      = true;
+      list->gradient    = gradient;
+      list->next        = NULL;   
+      
+      list->Node    = malloc (sizeof(Node));
+      memset (list->Node, 0, sizeof(Node));
+      
+      list->Node->x     = x;
+      list->Node->y     = y;
+      list->Node->count = 2;
+      list->Node->next  = NULL;
+  }
+}
+
+void free_Node(Node *node) {
+    
+   while(node->next != NULL) {
+       free_list(node->next);
+       break;
+   }
+    
+   free(node);
+}
+
+void free_list(List *list) {
+    
+   while(list->next != NULL) {
+       free_list(list->next);
+       break;
+   }
+    
+   if (list->Node != NULL)  free_Node(list->Node);
+   free(list);
+}
+
+// insert element into the Hash table
+void InsertNode (List **list, float gradient, int x, int y) {
+       
+  while ((*list)->Node != NULL) (*list)->Node = (*list)->Node->next;
+       
+  (*list)->Node    = malloc (sizeof(Node));
+  memset ((*list)->Node, 0, sizeof(Node));
+     
+  // initialize the node in the element
+  (*list)->Node->x     = x;
+  (*list)->Node->y     = y;
+  (*list)->Node->count = 2;
+  (*list)->Node->next  = NULL;
+}
+
+
+int maxPoints(int** points, int pointsSize, int* pointsColSize) {
+    
+    int   x1;
+    int   y1;
+    int   x2;
+    int   y2;
+    int   idx;
+    int   idy;
+    int   entry;
+    int   value; 
+    bool  found;
+    float gradient;
+    List  *list;
+    List  *head;
+  
+    // variable initialization
+    value    = 0;
+    found    = false;
+    list     = NULL;
+    gradient = 0;
+    entry    = 0;
+    
+    if (pointsSize == 1) return 1;
+    
+    for (idx = 0; idx < pointsSize-1; idx++) {
+        list  = malloc (sizeof(List));
+        head  = list;
+        memset (list,  0, sizeof(List)); 
+        
+        x1    = points[idx]  [0];
+        y1    = points[idx]  [1];
+
+        for (idy = idx+1; idy < pointsSize; idy++) {
+            x2    = points[idy][0];
+            y2    = points[idy][1];
+            
+            gradient  = calcGradient   (x1,   y1, x2, y2);
+            found     = SearchGradient (head, gradient, x1, y1, &entry, &list);
+        
+            if (found == false) {
+                InsertList (list, gradient, x1, y1);
+                if (list->Node->count > value) {
+                    value = list->Node->count;
+                }
+                list->next  = malloc (sizeof(List));
+                list        = list->next;
+                memset (list,  0, sizeof(List)); 
+            } else {
+                if (SearchNode (head, gradient, x2, y2, &entry, &list) == true) {
+                    list->Node->count++;
+                    if (list->Node->count > value) {
+                        value = list->Node->count;
+                    }
+                } else {
+                    InsertNode (&list, gradient, x2, y2); 
+                }
+            }
+        }
+        free_list(head);
+    }
+    
+    return value;
+}
