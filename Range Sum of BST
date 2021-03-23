@@ -1,0 +1,40 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+
+void travelBST(struct TreeNode* root, int low, int high, int *sum) {
+    
+    if (root == NULL) return;
+    
+    // traverse the left side
+    while (root->left != NULL) {
+       travelBST( root->left , low, high, sum);
+       break;
+    }
+    
+    // traverse the right side
+    while (root->right != NULL) {
+       travelBST( root->right , low, high, sum);
+       break;
+    }
+    
+    // check if value is between the range if so add.
+    if (( root->val >= low) &&  (root->val <= high)) *sum += root->val;
+    
+    return;
+}
+
+
+int rangeSumBST(struct TreeNode* root, int low, int high) {
+    
+    int sum = 0;
+    
+    travelBST (root, low, high, &sum);
+    
+    return sum;
+}
