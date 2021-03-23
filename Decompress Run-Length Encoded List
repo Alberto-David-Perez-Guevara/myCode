@@ -1,0 +1,38 @@
+
+
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int* decompressRLElist(int* nums, int numsSize, int* returnSize) {
+    
+    int idx_0;
+    int idx_1;
+    int offset;
+    int decompressSize;
+    int *decompressList;
+    
+    // sanitization - check input parameters 
+    if ((nums == NULL) || (returnSize == NULL) || (numsSize%2) || (numsSize < 1)) {
+        decompressList = NULL;
+        if (returnSize != NULL) *returnSize = 0;
+    } else {
+        offset         = 0;
+        decompressSize = 0;
+        for (idx_0 = 0; idx_0 < (numsSize/2); idx_0++) {
+            decompressSize += nums[(2*idx_0)];
+        }
+        decompressList = malloc(sizeof(int)*decompressSize);
+        memset(decompressList, 0, sizeof(int)*decompressSize);
+        
+        for (idx_0 = 0; idx_0 < (numsSize/2); idx_0++) {
+            for (idx_1 = 0; idx_1 < nums[(2*idx_0)]; idx_1++) {
+                decompressList [idx_1+offset] = nums[(2*idx_0)+1];
+            }
+            offset += idx_1;
+        } 
+    }
+    
+    *returnSize = decompressSize;
+    
+    return decompressList;
+}
