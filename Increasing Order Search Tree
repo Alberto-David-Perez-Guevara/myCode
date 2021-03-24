@@ -1,0 +1,54 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+
+void searchVal (struct TreeNode* root, struct TreeNode **incRoot, int *size) {
+    
+    if (root == NULL) return;
+    
+    if (root->left) { 
+      searchVal (root->left, incRoot, size);
+    } 
+    
+    (*incRoot)->val   = root->val;
+    (*incRoot)->left  = NULL;
+    (*incRoot)->right = malloc (sizeof(struct TreeNode));
+    memset ((*incRoot)->right,0,sizeof(struct TreeNode));
+    (*incRoot)        = (*incRoot)->right;
+    *size +=1;
+    
+    if (root->right) { 
+      searchVal (root->right, incRoot, size);
+    }
+    
+    
+}
+
+struct TreeNode* increasingBST(struct TreeNode* root) {
+    
+    int size = 0;
+    
+    struct TreeNode *incRoot, *Head; 
+    
+    if (root == NULL) return root;   
+    
+    incRoot = malloc (sizeof(struct TreeNode));
+    memset (incRoot,0,sizeof(struct TreeNode));
+    Head    = incRoot;
+    
+    searchVal (root, &incRoot, &size);
+    
+    incRoot = Head;
+    
+    while (size-- > 1) incRoot = incRoot->right;
+    
+    free (incRoot->right);
+    incRoot->right = NULL;
+    
+    return Head;
+}
