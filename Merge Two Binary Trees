@@ -1,0 +1,63 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+
+void mergeNode (struct TreeNode* root1, struct TreeNode* root2, struct TreeNode *merge) {
+    
+    if ((root1 == NULL ) && (root2 == NULL)) merge = NULL;
+    
+    if (root1 != NULL ) {
+         merge->val += root1->val;
+    }
+    
+    if (root2 != NULL ) {
+         merge->val += root2->val;
+    }
+    
+    if (((root1 != NULL) && (root1->left != NULL)) || 
+        ((root2 != NULL) && (root2->left != NULL))) {  
+        merge->left  = malloc (sizeof(struct TreeNode));
+        memset(merge->left, 0, sizeof(struct TreeNode));
+        if ((root1 != NULL) && (root2 != NULL)) {
+            mergeNode (root1->left, root2->left, merge->left);
+        } else if (root1 != NULL) {
+            mergeNode (root1->left, NULL, merge->left);
+        } else {
+            mergeNode (NULL, root2->left, merge->left);
+        }
+    }
+    
+    if (((root1 != NULL) && (root1->right != NULL)) || 
+        ((root2 != NULL) && (root2->right != NULL))) {
+        merge->right  = malloc (sizeof(struct TreeNode));
+        memset(merge->right, 0, sizeof(struct TreeNode));
+        if ((root1 != NULL) && (root2 != NULL)) {
+            mergeNode (root1->right, root2->right, merge->right);
+        } else if (root1 != NULL) {
+            mergeNode (root1->right, NULL, merge->right);
+        } else {
+            mergeNode (NULL, root2->right, merge->right);
+        }
+    }    
+}
+
+struct TreeNode* mergeTrees(struct TreeNode* root1, struct TreeNode* root2) {
+    
+    struct TreeNode* merge;
+    
+    merge  = malloc (sizeof(struct TreeNode));
+    memset(merge, 0, sizeof(struct TreeNode));
+    
+    if ((root1 == NULL ) && (root2 == NULL)) merge = NULL;
+    
+    mergeNode (root1, root2, merge);
+
+    
+    return merge;
+    
+}
