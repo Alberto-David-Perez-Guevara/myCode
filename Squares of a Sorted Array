@@ -1,0 +1,72 @@
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+void swapValues (int *A, int *B) {
+  int temp;
+  
+  temp = *B;
+  *B   = *A;
+  *A   = temp;
+}
+
+void sortArray(int* Array, int Size) {
+
+  int index_in;
+  int index_out;
+  int min_index;
+    
+  // move boundary of sub array  
+  for (index_out = 0; index_out < Size - 1; index_out++) {
+    
+      // find the minimum element in the unsorted array
+      min_index = index_out;
+      for (index_in =index_out + 1; index_in < Size; index_in++) {
+        if (Array[index_in] < Array[min_index]) {
+          min_index = index_in;
+        }
+      }
+    
+      // swap the elements
+      swapValues (&Array[min_index], &Array[index_out]);
+  }
+
+}
+
+int* sortedSquares(int* nums, int numsSize, int* returnSize){
+  
+  int  idx     = 0;
+  int  pivot   = 0;
+  int* squares = NULL;
+  
+  // incorrect parameters
+  if ((nums == NULL) || (numsSize < 1) || (returnSize == NULL)) return squares;
+  
+  // setup return array
+  squares = malloc(sizeof(int)*numsSize);
+  memset(squares,0,sizeof(int)*numsSize);
+  
+  // find first positive o use as pivot
+  // if pivot == 0 entire array is positive needs no sorting
+  // if pivot == numsSize entire array is negative needs only to be inverted
+  for (idx = 0; idx < numsSize; idx++) {
+    if (nums[idx] < 0) pivot++;
+  }
+  
+
+  printf ("pivot : %d \n", pivot);
+  // calculate squares
+  for (idx = 0; idx < numsSize; idx++) {
+    
+    if (pivot >= idx) {
+      squares[pivot-idx] = nums[idx]*nums[idx];      
+    } else {
+      squares[idx] = nums[idx]*nums[idx];
+    }
+  }
+  
+  sortArray  (squares, numsSize);
+  
+  *returnSize = numsSize;
+  
+  return squares;
+}
