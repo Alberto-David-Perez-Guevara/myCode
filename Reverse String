@@ -1,0 +1,21 @@
+void reverseString(char* s, int sSize) {
+    
+    int  string_index;
+    char temp_char;
+    
+    // check input parameters
+    if ((s == NULL) || (sSize < 1)) return;
+    
+    
+    // walk throught the string and reverse the positions front to back
+    for (string_index = 0; string_index < (sSize/2); string_index++) {
+        // temporary save the value @ the current index
+        temp_char        = s[string_index];
+        // move the end value of the string to the current index
+        s[string_index]  = s[sSize - string_index -1];
+        // move the value @ current index the end of the string
+        s[sSize - string_index -1]  = temp_char;
+    }
+
+    return;
+}
