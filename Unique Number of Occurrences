@@ -1,0 +1,60 @@
+bool uniqueOccurrences(int* arr, int arrSize){
+    
+    // variable declaration
+    int  index;
+    int  valueBounds;
+    int  offset;
+    int  *hashValue;  
+    int  *hashCount;  
+    bool result;
+    
+    // variable initialization
+    index        = 0;
+    offset       = 0;
+    result       = false;
+    valueBounds  = 1000;
+    
+    // check input parameters valid
+    if ((arr == NULL) || (arrSize < 1)) return result;
+    
+    // Hash count setup and initialization
+    hashValue = malloc (sizeof(int)*valueBounds*2);
+    memset(hashValue, 0, sizeof(int)*valueBounds*2);
+    
+    hashCount = malloc (sizeof(int)*arrSize);
+    memset(hashCount, 0, sizeof(int)*arrSize);
+    
+    // count the number of ocurrencess;
+    for (index = 0; index < arrSize;  index++) {
+        
+        // check validaty of the data
+        if ((arr[index] >= -valueBounds) && ((arr[index] <= valueBounds))) {
+            // if data is valid set increase the count in the hash
+            offset = arr[index]+valueBounds;    // transpose the value into hash index from 0 to 2*valueBounds
+            hashValue[offset]++;
+        }
+    }
+    
+    // check if count of ocurrances is unique;
+    for (index = 0; index < (2*valueBounds);  index++) {
+        
+        // check validaty of the data
+        if (hashValue[index]) { 
+            // if there is data in the Value hash check if the count is unique.
+            offset = hashValue[index]; 
+            // if hash key is repeated Values are not unique.
+            if (hashCount[offset] != 0) return result;
+            // if hash is 0 update hash
+            hashCount[offset] = offset;
+        }
+    }
+    
+    result = true;
+    
+    // do house cleaning release the memory of the hashes
+    free (hashCount);
+    free (hashValue); 
+    
+    return result;
+
+}
