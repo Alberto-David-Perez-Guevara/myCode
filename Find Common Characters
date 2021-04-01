@@ -1,0 +1,129 @@
+// asuming ASCII lower characters a to z  range [097:122]
+#define CHAR_A_OFFSET 97
+#define CHAR_Z_OFFSET 122
+#define SIZE  CHAR_A_OFFSET - CHAR_Z_OFFSET
+
+typedef struct commonchars {
+    unsigned int present;
+    unsigned int count[26];
+} COMMONCHARS;
+
+
+void outputStrings (COMMONCHARS *result, char **output, int size ) {
+    
+    unsigned int copy;
+    unsigned int index;
+    unsigned int limit;
+    unsigned int outIndex;
+    
+    copy      = 0;
+    outIndex  = 0;
+    limit     = CHAR_Z_OFFSET - CHAR_A_OFFSET;
+    
+    for (index = 0;  index <= limit; index++) {
+        
+       if ((result->present) & (1<<index)) {
+           copy      = 0;
+          
+           do {
+               output[outIndex] = (char *) malloc (2*sizeof (char));
+               memset (output[outIndex], '\0', 2*sizeof(char)); 
+               output[outIndex][0] = index + CHAR_A_OFFSET;
+               outIndex++;
+               copy++;
+           } while (copy < (result->count[index]));
+       }
+    }
+}
+
+
+int checkCommonChars (COMMONCHARS *result, int size) {
+    
+    int          outSize;
+    unsigned int index;
+    unsigned int limit;
+    unsigned int outIndex;
+    unsigned int stringSize;
+    
+    index       = 0;
+    outIndex    = 0;
+    outSize     = 0;
+    limit       = CHAR_Z_OFFSET - CHAR_A_OFFSET;
+    stringSize  = sizeof(char)*2;
+    
+   for (index = 0;  index <= limit; index++) {
+       if ((result->present) & (1<<index)) {
+           outSize += result->count[index];           
+       }
+    }
+    
+    return outSize;
+}
+
+void getCommonChars (COMMONCHARS *result, char *A, int stringIndex) {
+     
+    int          index     = 0;
+    int          offset    = 0;
+    unsigned int present   = 0;
+    unsigned int count[26] = {0};
+    unsigned int limit;
+    
+    limit     = CHAR_Z_OFFSET - CHAR_A_OFFSET;
+        
+    while (A[index] != NULL) {
+        if ((A[index] >= CHAR_A_OFFSET) || (A[index] >= CHAR_Z_OFFSET)) {
+            offset                 = A[index]- CHAR_A_OFFSET;
+            present               |= (1 << offset); 
+            
+            if (stringIndex == 0) {
+                result->present |= (1 << offset); 
+                result->count[offset] += 1;                  
+            } else {
+                if ((stringIndex != 0)  &&  (result->count[offset]) && ((result->present) & (1 << offset))) {  
+                    count[offset] += 1;
+                }
+            }          
+            index++;
+        }
+    }
+    
+   result->present &= present; 
+    
+   for (index = 0; index <= limit; index ++) {
+     if ((count[index]) && (count[index] < result->count[index]))
+         result->count[index]  = count[index];
+   }
+}
+
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+char ** commonChars(char ** A, int ASize, int* returnSize ) {
+    
+    int         stringIndex;
+    char        **output;
+    COMMONCHARS *result;
+    
+    *returnSize = 0;
+    
+    if ((A == NULL) || (*A == NULL) || (ASize < 1) || (returnSize == NULL)) return A;
+    
+    result = malloc (sizeof(COMMONCHARS));
+    memset (result, 0, sizeof(COMMONCHARS));
+    
+    // initialized array
+    getCommonChars (result, A[0], 0);
+    
+    for (stringIndex = 1; stringIndex < ASize; stringIndex++) {
+         getCommonChars (result, A[stringIndex], stringIndex);
+    }
+    
+    *returnSize = checkCommonChars(result, ASize);
+    
+    output = (char **) malloc (*returnSize*sizeof (char *));
+    memset (output, 0, *returnSize*sizeof (char*));
+    
+    outputStrings (result, output, ASize);
+
+    return output;
+}
