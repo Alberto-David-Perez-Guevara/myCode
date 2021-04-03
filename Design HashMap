@@ -1,0 +1,67 @@
+#define HASH_SIZE 1100000
+
+
+typedef struct {
+    bool valid;
+    int  value;
+} MyHashMap;
+
+/** Initialize your data structure here. */
+
+MyHashMap* myHashMapCreate() {
+    
+  unsigned int size;  
+  MyHashMap    *createHash;
+    
+  size       = sizeof(MyHashMap)*HASH_SIZE;
+  createHash = (MyHashMap    *) malloc (size);
+  memset(createHash, 0, size);
+    
+  return createHash;
+}
+
+/** value will always be non-negative. */
+void myHashMapPut(MyHashMap* obj, int key, int value) {
+  obj[key].valid = true;
+  obj[key].value = value;
+}
+
+/** Returns the value to which the specified key is mapped, or -1 if this map contains no mapping for the key */
+int myHashMapGet(MyHashMap* obj, int key) {
+    
+  int value;
+    
+  if (obj[key].valid) {
+      value = obj[key].value;
+  } else {
+      value = -1;
+  }
+    
+  return value;
+}
+
+/** Removes the mapping of the specified value key if this map contains a mapping for the key */
+void myHashMapRemove(MyHashMap* obj, int key) {
+  int value;
+    
+  if (obj[key].valid) {
+      obj[key].valid = false;
+  }
+    
+}
+
+void myHashMapFree(MyHashMap* obj) {
+    free(obj);
+}
+
+/**
+ * Your MyHashMap struct will be instantiated and called as such:
+ * MyHashMap* obj = myHashMapCreate();
+ * myHashMapPut(obj, key, value);
+ 
+ * int param_2 = myHashMapGet(obj, key);
+ 
+ * myHashMapRemove(obj, key);
+ 
+ * myHashMapFree(obj);
+*/
