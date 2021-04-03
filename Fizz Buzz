@@ -1,0 +1,39 @@
+#define STR1 "FizzBuzz"
+#define STR2 "Fizz"
+#define STR3 "Buzz"
+
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+char ** fizzBuzz(int n, int* returnSize) {
+
+    int index;
+    char **output;
+    
+    if ((n < 0) || (returnSize == NULL)) {
+        if (returnSize) *returnSize = 0;
+        return NULL;
+    }
+    
+    output = (char **) malloc (sizeof(char*)*n*(sizeof(int)));
+
+    for (index = 1; index <= n; index++) {
+        if ((index%15) == 0) {
+            output[index-1] = (char *) malloc (sizeof(char)*9);
+            strcpy(output[index-1],STR1);
+        } else if ((index%3) == 0) {
+            output[index-1] = (char *) malloc (sizeof(char)*5);
+            strcpy(output[index-1],STR2);
+        } else if ((index%5) == 0) {
+            output[index-1] = (char *) malloc (sizeof(char)*5);
+            strcpy(output[index-1],STR3);
+        } else {
+            output[index-1] = (char *) malloc (sizeof(char)*(index+1));
+            sprintf(output[index-1], "%d", index);
+        }
+    }
+    
+    *returnSize = n;
+    
+    return output;
+}
