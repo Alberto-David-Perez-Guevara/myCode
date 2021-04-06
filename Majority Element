@@ -1,0 +1,98 @@
+
+typedef struct Majority_Elem {
+    int                  value;
+    int                  count;
+    struct Majority_Elem *next;
+} MAJORITY_ELEMNT;
+
+
+bool findElement (MAJORITY_ELEMNT **head, int size, int element, int *max) {
+    
+    bool            found;
+    MAJORITY_ELEMNT *queue;
+    
+    queue  = *head;
+    found  = false;
+        
+    if (queue == NULL) return found;
+    
+    if (queue->value == element) {
+        found = true;
+        queue->count += 1;
+    }
+    
+        
+    while ((queue->next != NULL) && (found == false)){
+        queue = queue->next;
+        if (queue->value == element) {
+            found = true;
+            queue->count += 1;
+        }
+    }
+    
+    if ( queue->count > *max) {
+        *max = queue->count;
+    }
+    
+    return found;
+}
+
+
+void insertElement (MAJORITY_ELEMNT **tail, int *size, int element, int *max) {
+
+   int             search;
+   MAJORITY_ELEMNT *queue;
+    
+   queue = malloc (sizeof(MAJORITY_ELEMNT));
+   memset (queue, 0, sizeof(MAJORITY_ELEMNT));
+    
+   queue->value = element;
+   queue->count = 1;
+   queue->next  = NULL;
+    
+   if (*tail != NULL) {
+       (*tail)->next  = queue;
+   }
+   *tail         = queue;
+   *size        += 1;
+   if (queue->count > *max) *max = queue->count;
+}
+
+int majorityElement(int* nums, int numsSize) {
+    
+    int             order;
+    int             index;
+    int             maxValue;
+    int             size_of_queue;
+    bool            found;
+    MAJORITY_ELEMNT *head;
+    MAJORITY_ELEMNT *tail;
+
+    // check input params
+    if ((nums == NULL) || (numsSize <1)) return 0;
+    
+    
+    head          = NULL;
+    tail          = NULL;
+    found         = false;
+    order         = 0;
+    maxValue      = 0;
+    size_of_queue = 0;
+    
+    for (index = 0; index < numsSize; index ++) {
+        
+        found = findElement(&head, size_of_queue, nums[index], &maxValue);
+        
+        if (found == false) {
+            insertElement (&tail, &size_of_queue, nums[index], &maxValue);
+            if (size_of_queue == 1) head = tail;
+        }
+    }
+    
+    for (index = 0; index < size_of_queue; index ++) {
+        if (head->count == maxValue) break;
+        head = head->next;
+    }
+    
+    return (int)(head->value);
+}
