@@ -1,0 +1,135 @@
+// Moving average struct definition, members of struct are 
+// documented in the coments below
+typedef struct MovingAverage {
+    double                Val;         // value of this node
+    struct MovingAverage  *pNext;      // pointer to next element
+} MovingAverage;
+
+
+// global variable pointing to the tail of obj
+MovingAverage *pTail;
+
+// movingAverageCreate function
+//   creates the initialization buffer and sets the moving window 
+//   average to be use.
+//   INPUTS:
+//     <int size>   sets the size of the average window
+//   OUTPUTS:
+//     <MovingAverage *> returns a buffer of size MovingAverage
+//     <NULL> in case buffer is unable to allocate or input is incorrect
+MovingAverage* movingAverageCreate(int size) {
+    // pointer to MovingAverage buffer
+    MovingAverage *buffer;
+    // initialize pointer to NULL
+    buffer = NULL;
+    
+    // check input parameter for memory alocation, size is data type int
+    // buffer size can't be negative or 0
+    if ((size >=1) && (size <= 1000)) { 
+      // allocate buffer in a continues block and initialize it to 0
+      buffer = (MovingAverage *) malloc (sizeof(MovingAverage));
+    }
+    
+    // check if buffer was actually allocated
+    if (NULL !=  buffer) {
+      // initialize buffer with input parameters
+      buffer->Val       = size;
+      buffer->pNext     = NULL;
+        
+    }
+    
+    // set the Tail pointer to the head of the buffer
+    pTail = buffer;
+    
+    // return allocated pointer
+    return buffer;
+}
+
+// movingAverageNext function
+//   calculates the Moving average of values present in Obj based 
+//   on the value of size use in movingAverageCreate
+//   INPUTS:
+//     <MovingAverage *obj>   pointer to the object containing values
+//     <int val>              value of the new buffer to be created.
+//   OUTPUTS:
+//     <double> returns a buffer of size MovingAverage
+//      
+double movingAverageNext(MovingAverage* obj, int val) {
+   
+    // variable declaration
+    MovingAverage *buffer;  // pointer to new MovingAverage buffer
+    double         MovAvg;
+    uint16_t       Index;
+    uint16_t       Size;
+    
+    //variable initialization
+    Size   = 0;
+    Index  = 0;
+    MovAvg = 0;
+    buffer = NULL;
+    
+    // input parameter sanitization
+    // verify obj is not null and that val is between (-10^5 to 10^5)
+    if ((NULL != obj) && (NULL != pTail) && (val >= -100000) && (val <= 100000)) {
+        
+      Size = obj->Val;
+    
+      if ((Size >= 1) && (Size <= 1000)) {
+        // allocate buffer in a continues block and initialize it to 0
+        buffer = (MovingAverage *) malloc (sizeof(MovingAverage));
+
+        // confirm that buffer was indeed allocated to continue
+        if (NULL != buffer) { 
+          // initialize buffer with input parameters
+          buffer->Val       = val;
+          buffer->pNext     = pTail; 
+          pTail             = buffer;
+            
+          // calculate the Moving Average 
+          for (Index = 0; Index < Size; Index++) {
+            // add the entries in the buffer;
+            MovAvg += buffer->Val;
+             
+            // check if we reached the end of the buffer;
+            if (NULL == buffer->pNext->pNext) break;
+              
+            // go to next element check pointer is not null
+            if (NULL != buffer->pNext) buffer = buffer->pNext;
+          }
+          MovAvg /= (Index >= Size) ? Size:Index+1;
+        }
+      }
+    }
+    return MovAvg; // return value
+}
+
+void movingAverageFree(MovingAverage* obj) {
+  // is the data sensitive then we need to scrub memory location...
+  
+  MovingAverage* temp;
+    
+  // if current obj is Null just return
+  if (NULL == pTail->pNext) return;
+  
+  temp  = pTail;
+  pTail = pTail->pNext;
+    
+  // proceed to check next object
+  movingAverageFree(pTail);
+  
+  // free the last node in the list
+  free(pTail);
+  pTail = temp;
+      
+  // as a precuation make ptr go to NULL
+  obj   = NULL;
+  //pTail = NULL;
+}
+
+/**
+ * Your MovingAverage struct will be instantiated and called as such:
+ * MovingAverage* obj = movingAverageCreate(size);
+ * double param_1 = movingAverageNext(obj, val);
+ 
+ * movingAverageFree(obj);
+*/
