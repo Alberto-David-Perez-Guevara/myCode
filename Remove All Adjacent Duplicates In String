@@ -1,0 +1,66 @@
+
+
+
+char * removeDuplicates(char * s) {
+    char     *array;
+    bool     DstIdxZ;
+    uint32_t StrSize;
+    uint32_t SrcIndex;
+    uint32_t DstIndex;
+
+    array    = NULL;
+    StrSize  = 0;
+    SrcIndex = 0;
+    DstIndex = 0;
+    DstIdxZ  = false;
+    
+    // check input parameters
+    if (NULL == s) return NULL;
+    
+    // get input string length
+    StrSize = strlen (s);
+    
+    // verify string length is within parameters
+    if ((0 == StrSize) || (StrSize > 100000))return NULL;
+    
+    // initialize Array list
+    array = (char *) calloc (StrSize+1, sizeof(char));
+    
+    // check if array memory allocation was successfull
+    if (NULL == array) return NULL;
+    
+    array[DstIndex] = s[SrcIndex];
+    for (SrcIndex = 1;  SrcIndex < StrSize; SrcIndex++) {
+      // make sure Indexes are uncorrupted
+      if ((SrcIndex > StrSize) || (DstIndex > StrSize)) break;
+        
+      // compare current char with next char
+      if (array[DstIndex] == s[SrcIndex]) {
+          // if characters are the same remove the duplication i.e.
+          // make DstIndex writable and increase SrcIndex
+          if (0 != DstIndex) { 
+              DstIndex--;
+          }else {
+              // only set it on odd occurrences
+              DstIdxZ = (SrcIndex%2) ? true:false;
+          }
+          continue;
+      }
+            
+      // if char are different prepare to save it on the next index
+      if (false == DstIdxZ) DstIndex++;
+      // save char in the next position
+      array[DstIndex]      = s[SrcIndex];
+        
+      // if we reach this point we can release the flag
+      if (DstIdxZ) DstIdxZ = false;
+    }
+    // if we reached the end of the src string then terminate the dst string
+    if (SrcIndex == StrSize) array[DstIndex+1]='\0';
+    
+    // we encounter a condition where the return string should be null
+    if ((0 == DstIndex) && (true == DstIdxZ) && ((StrSize%2) == 0)) array[0] ='\0';
+    
+    return array;
+
+}
