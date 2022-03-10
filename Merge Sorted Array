@@ -1,0 +1,52 @@
+#define MAX_STR_LEN 200
+
+
+void merge(int* nums1, int nums1Size, int m, int* nums2, int nums2Size, int n){
+    // variable declaration
+    int Idx;
+    int Mptr;
+    int Nptr;
+        
+    // sanitize inputs parameters
+    if ((NULL == nums1)  || (NULL == nums2)   || (nums1Size < (m+n)) || ((m+n) > MAX_STR_LEN) ||\
+       (m > MAX_STR_LEN) || (n > MAX_STR_LEN) ||(m < 0)   ||  (n < 0)) return;
+    
+    // variable initalization
+    Idx  = 0;
+    Mptr = m-1;
+    Nptr = n-1;;
+    
+    // start from the end and copy values back to front
+    Idx = ((m+n-1) < 0) ? 0:(m+n-1);
+    
+    for (Idx; Idx >= 0; Idx--) {
+        
+        // if nums1 is bigger place that value in back of the array
+        if ((Mptr >=0) && (Nptr >= 0)) {
+          if ((nums1[Mptr] >= nums2[Nptr])) {
+            nums1[Idx]    = nums1[Mptr]; 
+            Mptr--;
+            continue;
+          } else {
+            nums1[Idx]    = nums2[Nptr]; 
+            Nptr--; 
+            continue;
+          }
+        } 
+        
+        if (Mptr >=0) {
+            nums1[Idx]    = nums1[Mptr]; 
+            Mptr--;
+            continue;
+        }
+        
+        if (Nptr >=0) {
+            nums1[Idx]    = nums2[Nptr]; 
+            Nptr--; 
+            continue;
+        }
+        
+    }
+    
+    return;
+}
