@@ -1,0 +1,64 @@
+#define MAX_STRLEN 200
+
+char * longestCommonPrefix(char ** strs, int strsSize) 
+{
+  // variable declaration
+  char    *CommonPfx;
+  uint8_t CharIdx;
+  uint8_t CharMax;
+  uint8_t PfxSize;
+  uint8_t StrsIdx;
+
+  // variable initialization
+  CharIdx   = 0;
+  CharMax   = 0;
+  PfxSize   = 0;
+  StrsIdx   = 0;
+  CommonPfx = NULL;
+  
+  // parameter sanitization
+  if (((0 >= strsSize ) || (MAX_STRLEN <= strsSize )) || (NULL == strs)) {
+    // if input parameters are illegal, return NULL .
+    CommonPfx = NULL;
+  } else {
+      
+    // in best case scenario the size of the common prefix
+    // will not exceed the size of the first string
+    PfxSize   = strnlen (strs[0], MAX_STRLEN);
+      
+    // allocate memory for the return string
+    CommonPfx = (char *)calloc(PfxSize+1, sizeof(char)); 
+    
+    // check if memory was successfully allocated
+    if (NULL != CommonPfx ) {    
+      // if memory was successfully allocated continue  
+    
+      for (CharIdx = 0; CharIdx < PfxSize; CharIdx++) {
+        // check for the sanity of the input string   
+        if (('a' > strs[0][CharIdx]) || ('z' < strs[0][CharIdx])) break;
+        // copy the character to CommonPfx
+        CommonPfx[CharIdx] = strs[0][CharIdx];
+      }
+        
+      // go through every string in **strs
+      for (StrsIdx = 1; StrsIdx <= (strsSize-1); StrsIdx++) {
+        // check validity of each input string
+        if (NULL == strs[StrsIdx]) break;  
+          
+        // compare characters in the strings up to maximum PfxSize         
+        for (CharIdx = 0; CharIdx < PfxSize; CharIdx++) {
+          // check for the sanity of the input string  
+          // compare characters in the CommonPfx string and the strs[StrsIdx]
+          if ((('a' > strs[StrsIdx][CharIdx]) || ('z' < strs[StrsIdx][CharIdx])) || \
+            (CommonPfx[CharIdx] != strs[StrsIdx][CharIdx])) {
+            // the characters are not the same adjust CommonPfx and PfxSize
+            PfxSize            = CharIdx;
+            CommonPfx[CharIdx] = '\0';
+          }
+        }
+      }
+    }
+  }
+    
+  return CommonPfx;
+}
