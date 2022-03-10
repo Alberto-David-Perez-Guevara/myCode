@@ -1,0 +1,39 @@
+#define MAX_LENGTH 30000
+#define MIN_VAL     -100
+#define MAX_VAL      100
+
+int removeDuplicates(int* nums, int numsSize) {
+    
+    // variable declaration
+    uint16_t NumsIdx;
+    uint16_t SlowIdx;
+    
+    // variable initialization
+    NumsIdx = 0;
+    SlowIdx = 0;
+    
+    // check input parameter sanitization
+    if ((NULL == nums) || (0 >= numsSize) || ( MAX_LENGTH < numsSize)) return 0;
+    
+    // scan the Nums array for each element
+    for (NumsIdx = 0; NumsIdx < (numsSize-1); NumsIdx++) {
+        // sanitze input parameters for the string
+        if ((MIN_VAL > nums[NumsIdx])|| (MAX_VAL < nums[NumsIdx])) break;
+        
+        // move element to the next position        
+        nums[SlowIdx] = nums[NumsIdx];
+    
+        // if current value is not equal to next one
+        if (nums[NumsIdx] != nums[NumsIdx+1]) {
+            SlowIdx++;
+        }
+    }
+
+    // make sure we consider the last item of the string
+    if (nums[SlowIdx] != nums[NumsIdx]) {
+      nums[SlowIdx] = nums[NumsIdx];  
+    }
+        
+    // return size of the new array
+    return SlowIdx+1;
+}
