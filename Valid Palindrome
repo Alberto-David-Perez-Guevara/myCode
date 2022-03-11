@@ -1,0 +1,79 @@
+#define MAX_STR_LENGTH 200000
+
+bool isPalindrome(char * s){
+
+    // variable declaration
+    bool     Result;
+    uint32_t WrIdx;
+    uint32_t StrIdx;
+    uint32_t StrSize;
+    
+    // variable initialization
+    StrIdx  = 0;
+    StrSize = 0;
+    WrIdx   = 0;
+    Result  = false;
+    
+    // input parameter sanitization
+    if (NULL == s) return Result;
+    
+    // check string size
+    StrSize = strlen(s);
+    
+    // check string size constrains
+    if (StrSize > MAX_STR_LENGTH) return Result;
+    
+    // if string is zero length then string is empty
+    // Since an empty string reads the same forward and 
+    // backward, it is a palindrome.
+    if (0 == StrSize) {
+        Result = true;
+        return Result;
+    }
+    
+    // remove non alpha numerical characters and convert 
+    // uppercase to lowercase
+    // 0 .. 9 are ASCII codes 48 to 57
+    // A .. Z "     "     "   65 to 90
+    // a .. z "     "     "   97 to 122
+    for (StrIdx = 0 ; StrIdx < StrSize; StrIdx++) {
+      // check if character is alphanumerical
+      if (((s[StrIdx] >= '0') && (s[StrIdx] <= '9')) || \
+          ((s[StrIdx] >= 'A') && (s[StrIdx] <= 'Z')) || \
+          ((s[StrIdx] >= 'a') && (s[StrIdx] <= 'z'))) {
+          
+        // move character to a closer position in the string
+        s[WrIdx] = s[StrIdx];
+        
+        // convert uppercase to lowercase
+        if ((s[WrIdx] >= 'A') && (s[WrIdx] <= 'Z')) {
+          s[WrIdx]     =  s[WrIdx] + 'a' - 'A';
+        }
+        // increase write pointer  
+        WrIdx++;                    
+      }
+    }
+    
+    // make sure to terminate the string correctly null    
+    if (WrIdx < StrSize) s[WrIdx] = '\0';
+    
+    // check if resulting string is a palindrome
+    // we can check all characters from both ends moving to 
+    // the middle, if they are different then its not a palindrome
+    // assume string is a palindrome
+    Result  = true;
+    if (0 == WrIdx)  return Result;
+    StrSize = WrIdx-1;
+    
+    for (StrIdx = 0 ; StrIdx <= StrSize/2; StrIdx++) {
+        // characters are different, string is not a palindrome
+        if (s[StrIdx] != s[StrSize-StrIdx]) {
+            Result = false;
+            break;
+        }
+    }
+    
+    
+    // return result of function computation
+    return Result;
+}
