@@ -1,0 +1,27 @@
+
+int minTimeToVisitAllPoints(int** points, int pointsSize, int* pointsColSize) {
+    
+    int   Idx;
+    int   PathDistance  = 0;
+    int   TotalDistance = 0;
+    int   DeltaX        = 0;
+    int   DeltaY        = 0;
+    
+    if ((NULL == points) || (NULL == pointsColSize) || (pointsSize < 2)) return 0;
+    
+    for (Idx = 0; Idx < (pointsSize-1); Idx++) {
+        
+      DeltaX = abs(points[Idx][0]-points[Idx+1][0]);
+      DeltaY = abs(points[Idx][1]-points[Idx+1][1]);
+            
+      if (DeltaY >= DeltaX) {
+        PathDistance = DeltaX + (DeltaY-DeltaX);
+      } else {
+        PathDistance = DeltaY + (DeltaX-DeltaY);                
+      } 
+        
+      TotalDistance += PathDistance;
+    }
+    
+    return TotalDistance;
+}
