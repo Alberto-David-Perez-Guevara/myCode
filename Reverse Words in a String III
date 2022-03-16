@@ -1,0 +1,36 @@
+
+void InvWord (char *s, char *ret,uint32_t Start, uint32_t End) {
+   uint32_t Idx; 
+   for (Idx = Start; Idx <= End; Idx++) {
+       ret[Idx] = s[End+Start-Idx];
+   }
+}
+
+char * reverseWords(char * s){
+    
+   const    char ch = ' ';
+   char     *ret;
+
+   uint32_t Idx;
+   uint32_t StrSize;
+   uint32_t Start;
+   uint32_t End;
+    
+   StrSize  = strlen(s);
+    
+   ret      = (char *) calloc (StrSize+1, sizeof(char));
+    
+   Start    = 0;
+   End      = StrSize;
+    
+   for (Idx = Start; Idx <= StrSize; Idx++) {
+     if ((s[Idx] == ' ') || (s[Idx] == '\0') || (Idx == StrSize)) {
+       End      = Idx-1;
+       InvWord( s, ret, Start, End);
+       ret[Idx] = s[Idx];
+       Start = Idx+1;
+     }
+   }
+    
+   return ret;
+}
