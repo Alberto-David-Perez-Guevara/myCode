@@ -1,0 +1,32 @@
+
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int* buildArray(int* nums, int numsSize, int* returnSize) {
+    
+    int      *Ans;
+    int       Val;
+    uint16_t  Idx;
+    
+    // sanitize input parameters
+    if ((NULL == nums) || (NULL == returnSize) || (numsSize < 1) || ((numsSize > 1000))) {
+        Ans         = NULL;
+        returnSize  = NULL;
+        return Ans;
+    }
+    
+    // allocate array and initialized to 0
+    Ans = (int *) calloc(numsSize, sizeof(int));
+        
+    // cicle through the array to get the values that will be come an index
+    for (Idx = 0; Idx < numsSize; Idx++) {
+        Val      = nums[Idx];
+        // verify if the value is a valid index in the array
+        if (Val >= numsSize) break;
+        // value in ans array from nums at position Val
+        Ans[Idx] = nums[Val];
+    }
+
+    *returnSize = Idx;
+    return Ans;
+}
