@@ -1,0 +1,38 @@
+#define HASH_SIZE 1000
+
+
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int* intersection(int* nums1, int nums1Size, int* nums2, int nums2Size, int* returnSize)
+{
+    int Idx;
+    int ptr;
+    int *Inter;
+    int Hash[HASH_SIZE] = {0};
+    
+    ptr        = 0;
+    Inter      = NULL;
+    *returnSize = 0;
+
+    for (Idx = 0; Idx < nums1Size; Idx++) {
+        Hash[nums1[Idx]] = 1;
+    }
+    
+    for (Idx = 0; Idx < nums2Size; Idx++) {
+        if (Hash[nums2[Idx]] == 1) { 
+          Hash[nums2[Idx]]   = 2;
+          *returnSize       += 1;
+        } 
+    }
+    
+    Inter = (int *) malloc (*returnSize*sizeof(int));
+    
+    for (Idx = 0; Idx < HASH_SIZE; Idx++) {
+        if (Hash[Idx] == 2) {
+           Inter[ptr++] = Idx;           
+        }
+    }
+    
+    return Inter;
+}
