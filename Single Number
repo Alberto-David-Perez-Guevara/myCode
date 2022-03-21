@@ -1,0 +1,47 @@
+#define MAX_SIZE 2048
+
+int singleNumber(int* nums, int numsSize){
+
+    int      Result;
+    uint32_t bitIdx;
+    uint32_t Idx;
+    uint32_t HashIdx;
+    uint32_t Mask;
+    uint32_t Hash[MAX_SIZE] = {0};
+    
+    Result = 0;
+    
+    for (Idx = 0; Idx < numsSize; Idx++) {
+      HashIdx       = (nums[Idx]>>5) + (MAX_SIZE/2);
+      bitIdx        = abs(nums[Idx]%32);
+    
+      if (Hash[HashIdx] & ((uint32_t)1<<bitIdx)) {
+        Hash[HashIdx] &= ~((uint32_t)1<<bitIdx);          
+      } else {
+        Hash[HashIdx] |= ((uint32_t)1<<bitIdx);
+      }
+    }
+    
+    for (Idx = 0; Idx < MAX_SIZE; Idx++) {
+      if (Hash[Idx]) {
+          Result  = (Idx - (MAX_SIZE/2))<<5;
+          HashIdx = Idx;
+          break;
+      }
+    }
+    
+    for (Idx = 0; Idx < 32; Idx++) {
+      Mask = ((uint32_t)1 << Idx);
+      if (Hash[HashIdx] & Mask) {
+          
+          if (Result >= 0) {
+            Result  += Idx;
+          } else {
+            Result  += (Idx > 0) ? (32-Idx): 0;
+          }
+          break;
+      }
+    }
+    
+    return Result;
+}
