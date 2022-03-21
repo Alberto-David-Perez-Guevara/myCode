@@ -1,0 +1,76 @@
+int getNum(char * s) {
+    int num;
+    
+    num = s[0]-'0';
+    if ((s[1] >= '0') && (s[1] <= '9')) {
+      num *= 10;
+      num += s[1]-'0';
+    }
+    return num;
+}
+
+
+bool FindNumPair (char ** s, int *Num1, int *Num2) {
+    int        NumA;
+    int        NumB;
+    const char ch = ' ';
+
+    while ((*s != NULL)  && (**s != '\0')) {
+        if ((*s[0] >= '0') && (*s[0] <= '9')) {
+            NumA = getNum(*s);
+            *s     = strchr(*s, ch);  
+            if (*s != NULL) *s +=1;
+            break;
+        } else {
+            *s = strchr(*s, ch);  
+            if (*s != NULL) {
+                *s +=1; 
+            } else {
+              NumA = 0x7FFFFFF0;
+              NumB = 0x7FFFFFFF;
+            }
+        }
+    }
+    
+    while ((*s != NULL)  && (**s != '\0')) {
+        if ((*s[0] >= '0') && (*s[0] <= '9')) {
+            NumB = getNum(*s);
+            *s     = strchr(*s, ch);
+            if (*s != NULL) *s +=1;
+            break;
+        } else {
+            *s = strchr(*s, ch);
+            if (*s != NULL) {
+                *s +=1; 
+            } else {
+              NumB = 0x7FFFFFFF;
+            }
+        }
+    }
+    
+    if ((*Num2 > -1) && (NumA < 0x7FFF0000) && (NumA <= *Num2)) return false;
+    
+    *Num1 = NumA;
+    *Num2 = NumB;
+    
+    return (*Num2 <= *Num1) ? false:true;
+}
+
+bool areNumbersAscending(char * s) {
+    int        Num1;
+    int        Num2;
+    char       *str;
+    bool       Output;
+
+    str       = s;
+    Num1      = -1;
+    Num2      = -1;
+    Output    = true; 
+
+    while (str !=NULL) {
+        Output = FindNumPair (&str, &Num1, &Num2);
+        if (Output == false) return Output;
+    }
+
+    return Output;
+}
