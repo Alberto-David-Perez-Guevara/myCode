@@ -1,0 +1,37 @@
+
+int maxPower(char * s){
+    char     CurrChar;
+    uint32_t Idx;
+    uint32_t Key;
+    uint32_t Max;
+    uint32_t CurrCnt;
+    uint32_t StrLen;
+    
+    if (s != NULL) {
+        
+        Max      = 0;
+        CurrCnt  = 0;
+        CurrChar = 0;
+        StrLen   = strlen (s);
+        
+        for (Idx = 0; Idx < StrLen; Idx++) {
+            if ((s[Idx] >= 'a') && (s[Idx] <= 'z')) {
+            
+                if (Idx == 0) {
+                    CurrCnt  += 1;
+                } else {
+                    if (CurrChar ==  s[Idx]) {
+                       CurrCnt  += 1;
+                    } else {
+                       CurrCnt   = 1;                        
+                    }
+                }
+                if (CurrCnt > Max) {
+                    Max = CurrCnt;
+                }
+                CurrChar  = s[Idx];
+            }
+        }
+    }
+    return Max;
+}
