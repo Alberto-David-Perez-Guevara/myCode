@@ -1,0 +1,35 @@
+
+
+bool isAnagram(char * s, char * t){
+    bool    result;
+    uint8_t key;
+    uint8_t Idx;
+    uint8_t Hash[30] = {0};
+    
+    Idx     = 0;
+    key     = 0;
+    result  = true;
+        
+    if ((s != NULL) || (t != NULL)) {
+        while (s[0] != '\0')  {
+            key        =  s[0] - 'a' ;
+            Hash[key] += 1;
+            s++;
+        }
+        
+        while (t[0] != '\0')  {
+            key        =  t[0] - 'a' ;
+            Hash[key] -= 1;
+            t++;
+        }  
+        
+        for (Idx = 0;  Idx < ('z'- 'a'); Idx++) {
+           if (Hash[Idx]) result  = false;
+        }
+        
+    } else {
+        result  = false;  
+    }
+    
+    return result;
+}
