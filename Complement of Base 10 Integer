@@ -1,0 +1,23 @@
+
+int bitwiseComplement(int n) {
+    
+    uint32_t mask;
+    uint32_t Idx;
+    uint32_t result;
+    
+    mask = 0;
+    
+    for (Idx = 30; Idx > 0; Idx--) {
+        if (n & (1 << Idx)) {
+            mask = (1 << Idx) - 1;
+            break;
+        }
+    }
+    
+    if ( n == 0) mask = 1;
+    
+    result = ~n & mask;
+    
+    return result;
+
+}
