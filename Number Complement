@@ -1,0 +1,48 @@
+#define BIT0 1
+#define BIT1 2
+#define BIT2 4
+#define BIT3 8
+
+int findComplement(int num) {
+    
+   int      complement;  
+   uint32_t mask;
+   uint32_t size;
+   uint32_t index;
+   uint32_t shift;
+   uint32_t submask;
+    
+   mask        = 0;
+   size        = sizeof(num)*2;
+   shift       = 0;
+   submask     = 0;
+   complement  = ~(num);
+    
+   for (index = 0; index < size; index ++) {
+       
+      if ((index < (size-1)) && (num > (int)((BIT3 | BIT2 | BIT1 | BIT0) << (index*4)))) continue;
+       
+      shift   = (num >> (index*4));
+      submask = (1 << (index*4)) - 1;
+       
+      if (shift & BIT3) {
+          mask  = (BIT3 - 1) << (index*4); 
+          mask += submask;
+      } else if (shift & BIT2) {
+          mask  = (BIT2 - 1) << (index*4);       
+          mask += submask;
+      } else if (shift & BIT1) {
+          mask  = (BIT1 - 1) << (index*4);  
+          mask += submask;
+      } else if  (shift & BIT0) {
+          if (index > 0) mask = (BIT0 << (index*4))-1;
+      } else {
+          mask = submask;
+      }
+       
+      break;
+   }
+    
+   return  (complement & mask);
+    
+}
