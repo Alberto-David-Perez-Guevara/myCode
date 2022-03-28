@@ -1,0 +1,23 @@
+
+int missingNumber(int* nums, int numsSize) {
+    
+    int     Idx;
+    int     Key;
+    int     Num;
+    uint8_t Hash[10000] = {0};
+    
+    Num = 0;
+
+    for (Idx = 0; Idx < numsSize; Idx++) {
+        Key       = nums[Idx];
+        Hash[Key] = 1;
+    }
+    
+    for (Idx = 0; Idx <= numsSize; Idx++) {
+        if (Hash[Idx]) continue;
+        Num = Idx;
+        break;
+    }
+    
+    return Num;
+}
