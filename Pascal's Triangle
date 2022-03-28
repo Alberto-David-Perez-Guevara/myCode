@@ -1,0 +1,49 @@
+
+
+/**
+ * Return an array of arrays of size *returnSize.
+ * The sizes of the arrays are returned as *returnColumnSizes array.
+ * Note: Both returned array and *columnSizes array must be malloced, assume caller calls free().
+ */
+int** generate(int numRows, int* returnSize, int** returnColumnSizes) {
+    
+    uint8_t IdxR;
+    uint8_t IdxC;
+    uint8_t Size;
+    
+    int     **Triangle;
+
+    IdxC     = 0;
+    IdxR     = 0;
+    Size     = 0;
+    Triangle = NULL;
+    
+    if ((numRows > 0) && (numRows < 31)  && (returnSize != NULL) && (returnColumnSizes != NULL))  {
+        
+      // malloc triagle array
+      Triangle            = (int **)malloc (sizeof(int *) * numRows);
+      *returnColumnSizes  = (int *) malloc (sizeof(int  ) * numRows);
+ 
+      for (IdxR = 0; IdxR < numRows; IdxR++) { 
+          Triangle[IdxR]               = (int * )malloc (sizeof(int )*(IdxR+1));
+          *(*returnColumnSizes + IdxR) = IdxR+1;
+          
+          for (IdxC = 0; IdxC <= IdxR; IdxC++) {
+              if (IdxR < 2 ) {
+                  Triangle[IdxR][IdxC]     = 1;
+              } else {
+                  if ((IdxC == 0) || (IdxC == IdxR)) {
+                      Triangle[IdxR][IdxC] = 1;                                          
+                  } else {
+                      Triangle[IdxR][IdxC] = Triangle[IdxR-1][IdxC-1]+Triangle[IdxR-1][IdxC];                      
+                  }
+             } 
+          }
+      }
+
+      *returnSize             = IdxR;
+    }
+    
+    return Triangle;
+
+}
