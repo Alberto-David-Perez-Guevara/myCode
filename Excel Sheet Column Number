@@ -1,0 +1,20 @@
+
+int titleToNumber(char * columnTitle)  {
+    int      Idx;
+    uint8_t  StrLen;
+    uint32_t Pwr;
+    uint32_t ColNum;
+    uint32_t temp;
+    
+    Pwr    = 1;
+    ColNum = 0;
+    StrLen = strlen (columnTitle);
+    
+    for (Idx = (StrLen-1); Idx >= 0; Idx--) {
+        temp    = columnTitle[Idx] - 'A' + 1;
+        ColNum += (columnTitle[Idx] - 'A' + 1)*(Pwr);
+        Pwr    *= 26; 
+    }
+
+    return ColNum;
+}
