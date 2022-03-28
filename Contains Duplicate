@@ -1,0 +1,16 @@
+int comp (const void * a, const void * b) {
+   return ( *(int*)a - *(int*)b );
+}
+
+bool containsDuplicate(int* nums, int numsSize) {
+    int  idx;
+    bool Duplicate = false;
+
+    qsort (nums, numsSize, sizeof(int), comp);
+    
+    for (idx = 1; idx < numsSize ; idx++) {
+      if (nums[idx-1] == nums[idx]) Duplicate = true;
+    }
+    
+    return Duplicate;
+}
