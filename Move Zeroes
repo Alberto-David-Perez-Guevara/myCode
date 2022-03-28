@@ -1,0 +1,22 @@
+
+void moveZeroes(int* nums, int numsSize){
+ int fast;
+ int slow;
+
+ fast = 0;
+ slow = 0;
+    
+ for (fast = 0; fast < numsSize; fast++) {
+     if (nums[fast] != 0) {
+         nums[slow] = nums[fast];
+         slow++;
+     }
+ }
+    
+ for (fast = 0; fast < (numsSize-slow); fast++) {
+     nums[numsSize-fast-1] = 0;
+ }
+
+    
+ return;
+}
