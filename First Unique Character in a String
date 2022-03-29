@@ -1,0 +1,26 @@
+   
+
+int firstUniqChar(char * s) {
+    int  ret; 
+    int  idx;
+    char key;
+    int  Hash[27] = {0};
+    
+    idx =  0;
+    ret = -1;
+
+    for (idx = 0; idx < strlen(s) ; idx++) {
+        key        = s[idx] - 'a';
+        Hash[key] += 1;
+    }
+    
+    for (idx = 0; idx < strlen(s) ; idx++) {
+        key        = s[idx] - 'a';
+        if (Hash[key] == 1) {
+            ret = idx;
+            break;
+        }
+    }
+    
+    return ret;
+}
