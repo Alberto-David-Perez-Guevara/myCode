@@ -1,0 +1,38 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+
+#define SIZE 20000
+
+bool InOrderTraversal (struct TreeNode* root, char *Hash, int k) {
+    uint16_t key;
+    uint16_t Index;
+    uint16_t Search;
+    
+    if (root == NULL) return false;
+    
+    key       = SIZE + (root->val);
+    Hash[key] = 1;
+    Index     = SIZE + k;
+    Search    = SIZE + Index - key;
+
+    if ((Hash[Search])  && (key != Search)){
+        return true;
+    }
+        
+    return InOrderTraversal (root->left, Hash, k) || InOrderTraversal (root->right, Hash, k); 
+    
+}
+
+
+bool findTarget(struct TreeNode* root, int k) {
+    
+    char Hash[SIZE*2] = {0};
+ 
+    return InOrderTraversal  (root, Hash, k);
+}
