@@ -1,0 +1,44 @@
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int* productExceptSelf(int* nums, int numsSize, int* returnSize) {
+
+    int index;
+    int temp;
+    // return array
+    int *output = NULL;
+    
+    // check input parameters
+    if ((nums == NULL) || (numsSize < 1) || (returnSize == NULL)) {
+        return NULL;
+    }
+
+    // alocate array
+    output = malloc (sizeof (int) * numsSize);
+
+    // check if memory was allocated
+    if (output == NULL) {
+        return NULL;
+    }
+    
+    temp      = 1;
+    output[0] = 1;
+
+    for (index = 1; index < numsSize; index++) {
+        output[index] = nums[index-1] * output[index-1];
+    }
+
+
+    for (index = (numsSize-1); index >= 0; index --)  {
+        output [index] *= temp;
+                  temp *= nums[index];
+    }
+
+  
+    // output array size
+    *returnSize = numsSize;
+
+    // return output array
+    return output;
+
+}
