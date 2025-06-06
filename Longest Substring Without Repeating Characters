@@ -1,0 +1,55 @@
+#define MAX_STR_SIZE  10000
+#define MAX_CHAR_TYPE 0x100
+
+int lengthOfLongestSubstring(char* s) {
+
+    int      subLen;    
+    uint16_t charHash[MAX_CHAR_TYPE] = {0};
+    uint16_t index;
+    uint16_t chrIdx;
+    uint16_t strIdx;
+    uint32_t stringSize;
+
+    //
+    // check input parameters
+    //
+
+    // string pointer is allocated
+    if ( s == NULL) {
+        return 0;
+    }
+
+    // check input string size
+    stringSize = 0;
+    stringSize = strnlen (s, MAX_STR_SIZE);
+    
+    if (stringSize < 1) {
+        return 0;
+    }
+
+    //
+    // find longest substring without repeating characters
+    //
+
+    strIdx   = 0;
+    subLen = 0;
+
+    // traverse the string
+    for (index = 0; index < stringSize; index++) {
+        
+        // use character as index to the hash
+        chrIdx = s[index];
+
+        // if character is in the hash then update start index
+        if (charHash[chrIdx] > 0 ) {
+           strIdx = (strIdx > charHash[chrIdx] ) ? strIdx : charHash[chrIdx];
+        }
+
+        subLen = (subLen > (index - strIdx +1)) ? subLen : (index - strIdx +1);
+        charHash[chrIdx] = index +1;
+
+    }
+
+
+    return subLen;
+}
