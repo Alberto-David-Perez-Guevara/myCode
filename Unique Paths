@@ -1,0 +1,34 @@
+int uniquePaths(int m, int n) {
+
+    // check parameters
+    if ((m < 0) || (n < 0)) return 0;
+    
+    uint32_t mdx;
+    uint32_t ndx;
+    uint32_t ans[m][n];
+
+    // initialize the output array to 0
+    for (mdx = 0; mdx < m; mdx++ ) {
+        memset (&ans[mdx][0], 0, sizeof(uint32_t)*n);
+    }
+
+    // initialize the m edges path
+    for (mdx = 0; mdx < m; mdx++ ) {
+        ans[mdx][0] = 1;
+    }
+
+   // initialize the n edges path
+   for (ndx = 0; ndx < n; ndx++ ) {
+        ans[0][ndx] = 1;
+    }
+
+    // cycle throug sub matrices
+    for (mdx = 1; mdx < m; mdx++ ) {
+        for (ndx = 1; ndx < n; ndx++ ) {
+            ans[mdx][ndx] = ans[mdx-1][ndx] + ans[mdx][ndx-1];
+        }
+    }
+
+    // return answer.
+    return ans[m-1][n-1];
+}
