@@ -1,0 +1,37 @@
+int reverse (int x) {
+
+    uint8_t     Idx;
+    uint8_t     num;
+    uint8_t     sign;
+    long long   tmp;
+
+    // 2^31 is roughly equivalent to 10 decimal digits + 1 sign digit
+    char digits [10] = {0};
+    
+    // get sign from x if positive = 0 else negative
+    sign = (x > 0) ? 0:1;
+
+    // get single digits from x
+    tmp = x;
+    num = 10;
+    for (Idx = 0; Idx < num; Idx++ ) {
+        if (tmp == 0) break;
+        digits[Idx] = tmp % 10;
+        tmp       /= 10;
+    }
+
+    // revert the digits in the number
+    num = Idx;
+    tmp = 0;
+    for (Idx = 0; Idx < num; Idx++ ) {
+        tmp *= 10;
+        tmp += digits[Idx];
+    }
+
+    // check for overflow
+    if ((tmp > INT_MAX) || (tmp < INT_MIN)) {
+      return 0;
+    } else {
+      return tmp;
+    }
+}
