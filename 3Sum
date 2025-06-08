@@ -1,0 +1,183 @@
+/**
+ * Return an array of arrays of size *returnSize.
+ * The sizes of the arrays are returned as *returnColumnSizes array.
+ * Note: Both returned array and *columnSizes array must be malloced, assume caller calls free().
+ */
+
+ // use a hash map capable to store all elements from -10^5 to 10^5
+#define HASH_MAP_SIZE   200000
+#define HASH_MAP_OFFSET HASH_MAP_SIZE/2
+
+int searchTwoSum (int idx, int offset, int *nums, int size, int *hashMap, int *j, int *k) {
+   
+   int  a;
+   int  b;
+   int  i;
+   int  off;
+   int  sum;
+   int  search;
+   int  count;
+
+   a     = 0;
+   b     = 0;
+   i     = 0;
+   sum   = 0;
+   off   = HASH_MAP_OFFSET;
+   search = 0;
+
+   sum = nums[idx];
+
+   for (i = offset; i < size-1; i++) {
+       a = nums[i];
+       b = -sum - a;
+       if (b < a) continue;
+       if ((b >= HASH_MAP_OFFSET) || (b <= -HASH_MAP_OFFSET)) continue;
+       count = hashMap[b + off];
+       if (count) {
+        search = i;
+        break;
+       }
+   }
+
+   // skip self
+   if ((!a) && (!b) && (!sum) && (count < 3)) search = 0;
+   if ((a == b) && (count < 2)) search = 0;
+
+   if (a > b) {
+      *j = b;
+      *k = a;
+   } else {
+      *j = a;
+      *k = b;
+   }
+   
+   return search;
+}
+
+
+void addTripletToOutput ( int** output,  int i, int j, int k,  int** returnColumnSizes, int *returnSize) {
+    int idx;
+    int found;
+    
+    found = 0;
+
+    // initialize output
+    if (*returnSize == 0) {
+        output[*returnSize]     = (int *)malloc(3 * sizeof(int));
+        (*returnColumnSizes)[0] = 3;
+        output[*returnSize][0]  = i;
+        output[*returnSize][1]  = j;
+        output[*returnSize][2]  = k;                
+        *returnSize            += 1;
+    } else {
+      // check if triplet is present
+      for (idx = 0; idx < *returnSize; idx++) {
+        // if new triplet is found mark it.
+        if ((output[idx][0] == i) && (output[idx][1] == j) && (output[idx][2] == k))  {
+            found = 1;
+            break;
+        }
+      }
+
+      // if triplet not found add it.
+      if (!found) { 
+        output[*returnSize]               = (int *)malloc(3 * sizeof(int));
+        (*returnColumnSizes)[*returnSize] = 3;
+        output[*returnSize][0]            = i;
+        output[*returnSize][1]            = j;
+        output[*returnSize][2]            = k;                
+        *returnSize                      += 1;            
+      }
+    }
+
+    return;
+}
+
+int** threeSum(int* nums, int numsSize, int* returnSize, int** returnColumnSizes) {
+
+    int idx;
+    int key;
+    int i;
+    int j;
+    int k;
+    int temp;
+    int count;
+    int search;
+    int offset;
+
+    int **output;
+
+    // create an array to use as a hash map for quick look ups
+    uint32_t *hashMap;
+
+    output            = NULL;
+    
+    // check input parameters
+    if ((nums == NULL) || (numsSize < 3) || (numsSize > 3000) || (returnSize == NULL) || (returnColumnSizes == NULL)) {
+        return output;
+    }
+
+    // allocate output buffer
+    *returnSize        = 0;
+    output             = (int **)malloc (sizeof(int *)* (numsSize*numsSize));
+    *returnColumnSizes = (int*)  malloc (sizeof(int) * (numsSize * numsSize));
+    memset (*returnColumnSizes, 0, sizeof(int) * (numsSize * numsSize));
+
+    // check if buffer is allocated
+    if (output == NULL) return output;
+
+    // allocate memory for the hashMap
+    hashMap = calloc(HASH_MAP_SIZE, sizeof(uint32_t));
+
+    // fill the hash with input values
+    for (idx = 0; idx < numsSize; idx++) {
+        key            = HASH_MAP_OFFSET + nums [idx];
+        hashMap[key]  += 1;
+    }
+
+    // use hashMap to sort input array
+    i = 0;
+    for (idx = 0; idx < HASH_MAP_SIZE; idx++) {
+        if (hashMap[idx]) {
+            for (j=0; j < hashMap[idx]; j++) {
+                 nums[i++] = idx -HASH_MAP_OFFSET;
+                 printf ("[%d] ",nums[i-1]);         
+            }
+        }
+    }
+    
+    // find a triplet
+    count  = 0;     
+    search = 0;
+    offset = 1;
+
+    for (idx = 0; idx < numsSize-2; idx++) {
+       // grab the element of the input array
+       i = nums[idx];
+
+       // look for the negative sum
+       search = searchTwoSum (idx, offset, nums, numsSize, hashMap, &j, &k);
+       
+       if (search) {
+         addTripletToOutput (output, i, j, k, returnColumnSizes, returnSize);
+         //printf ("\n array found %d %d %d",i, j, k);  
+         idx--;       
+         offset = search + 1;
+       }  else {
+         offset = idx + 2;
+       }
+      
+
+    /*
+  
+           if ((k >= (HASH_MAP_SIZE/2)) || (k <= (-HASH_MAP_SIZE/2))) continue;
+  
+           if (((j == k) || (i == k)) && (search < 2)) search = 0;
+           if (search == 0) continue;
+  
+            if ((i == j) && (j == k) && (search < 3))  continue;
+
+        */
+    }
+    return output;
+}
