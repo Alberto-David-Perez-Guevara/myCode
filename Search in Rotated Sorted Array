@@ -1,0 +1,52 @@
+int find (int* nums, int numsSize, int target, int left, int right) {
+
+   int lx = left;
+   int rx = right;
+   int middle;
+   
+   while (lx <= rx) {
+
+     middle = (lx + rx)/2;
+    
+     if (nums[middle] ==  target) {
+        return middle;
+     } else if (nums[middle] >  target) {
+         rx = middle - 1;
+     } else  {
+         lx  = middle + 1;
+     }
+   }
+  
+   return -1;
+}
+
+int search(int* nums, int numsSize, int target) {
+
+  int found  = 0;
+  int middle = 0;
+  int left   = 0;
+  int right  = numsSize-1;
+
+  // check input parameters
+  if ((nums == NULL) || (numsSize < 1) || (target > 10000)) {
+    return -1;
+  }
+
+  while (left <= right) {
+    middle = (left + right)/2;
+    
+    if (nums[middle] > nums[numsSize-1]) {
+        left  = middle + 1;
+    } else {
+        right = middle - 1;
+    }
+  }
+
+  found = find (nums, numsSize, target, 0, left - 1);
+ 
+  if (found == -1) {
+    found = find (nums, numsSize, target, left, numsSize - 1);
+  }
+
+  return found;
+}
