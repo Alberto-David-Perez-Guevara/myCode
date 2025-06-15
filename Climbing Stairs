@@ -1,0 +1,41 @@
+int calculateClimb (int step, int level, int *cache) {
+
+    // check if we reach the nth level
+    if (step > level) {
+        return 0;
+    }
+
+    // nth level has been reached.
+    if (step == level) {
+        return 1;
+    }
+
+    // check if the cache is empty, if its empty:
+    // if the end level has not been reached compute recursively the climb in one step + two steps.
+    if (cache[step] == 0) {
+        cache[step] =  calculateClimb (step + 1,  level, cache) + calculateClimb (step + 2,  level, cache);
+    }
+
+   // return cache value
+   return cache[step];
+}
+
+int climbStairs(int n) {
+
+   int *cache;   // save computations to speed up algorithm
+   int result;  // return the combination of steps
+
+   result = 0;
+   cache  = (int *) calloc (n+1, sizeof(int));
+
+   if (cache == NULL) {
+      printf ("Error unable to allocate cache buffer");
+      return -1;
+   }
+
+   // recursively compute the aproach 
+   result = calculateClimb (0,  n, cache);
+
+   free (cache);
+   return result;    
+}
