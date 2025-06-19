@@ -1,0 +1,33 @@
+
+int maxSubArray(int* nums, int numsSize) {
+
+    uint32_t idx;
+    int max;
+    int tmp;
+
+    // check parameters
+    if ((nums == NULL) || (numsSize < 1) || (numsSize > 100000) ) {
+        return 0;
+    }
+
+    tmp = nums[0];
+    max = nums[0];
+
+    // go through the each element of the array
+    for (idx = 1; idx < numsSize; idx++) {
+     
+       // reset if sub-array becomes negative
+       if (tmp < 0) {
+         tmp = nums[idx];
+       } else {
+         tmp += nums[idx];        
+       }
+
+       // if sub-arrays is bigger update max count
+       if (tmp > max) {
+         max = tmp;
+       }
+    }
+
+    return max;    
+}
